@@ -135,6 +135,15 @@ def make_sim_matrix(merged_df, similarity_measure=cosine_similarity, mean=True, 
     similarity_df = pd.DataFrame(cosine_similarity(X, X), index=df_scaled.index, columns=df_scaled.index)
     return df_scaled, similarity_df
 
+def get_recommendations(baseline_hike, n_hikes):
+    sim_series = similarity_df.loc[baseline_hike]
+    idx = np.argsort(sim_series)[::-1][1:n_hikes+1]
+    hikes = df_merged.index
+    recs = [hikes[i] for i in idx]
+    print(f"If you enjoyed {baseline_hike}, you may like these:\n")
+    for i, rec in zip(idx, recs):
+        print(f"{hikes[i]}: {hike_dictionary[rec]}")
+
 additional_lemmatize_dict = {
     "biking": "bike",
     "bikes": "bike"
@@ -168,3 +177,9 @@ if __name__ == "__main__":
     # X = df_scaled.values
     # similarity_df = pd.DataFrame(cosine_similarity(X, X)) 
     df_scaled, similarity_df = make_sim_matrix(df_merged)
+
+    sim_series = similarity_df.loc['Royal Arch Trail']
+    idx = np.argsort(sim_series)[::-1][1:11]
+    hikes = df_merged.index
+    for i in idx:
+        print(hikes[i])
