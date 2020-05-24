@@ -77,6 +77,26 @@ def get_top_words_tf(X, features, n_words=10):
     top_dict = {str(features[i]): int(summed[i]) for i in indices_top}
     return top_dict
 
+def nmf_topic_modeling(corpus, tfidf_matrix, tfidf_feats, n_topics, n_words=10, max_iter=250, print_tab=False):
+    ## NMF
+    W, H = get_nmf(tfidf_matrix, n_components=n_topics, max_iter=max_iter)
+    top_words = get_topic_words(H, tfidf_feats, n_features=15)
+    df_pretty = print_topics(top_words, False)
+    ## Add majority topic to hikes
+    copy_maincorpus = corpus.copy()
+    copy_maincorpus['topics'] = document_topics(W)
+    ## Make df with loadings
+    cols = ['topic_'+str(i) for i in range(1,n_topics+1)]
+    W_df = pd.DataFrame(W.round(2), index=copy_maincorpus.index, columns=cols)
+    W_df['majority_topic'] = document_topics(W)
+    W_df['majority_topic'] += 1
+    H_df = pd.DataFrame(H.round(2), index=cols, columns=tfidf_feats)
+    return df_pretty, W_df, H_df
+
+additional_lemmatize_dict = {
+    "biking": "bike",
+    "bikes": "bike"
+}
 
 if __name__ == "__main__":
     df_raw = json_to_pandas('/Users/annierumbles/Dropbox/raw_colorado_hikes.json')
@@ -85,3 +105,11 @@ if __name__ == "__main__":
     df_reviews = make_reviews_df(rows, docs)
     df_corpus = make_corpus_df(df_raw, df_reviews)
     df_hike = make_hike_df(df_raw)
+
+    punc = string.punctuation
+    stop = StopWords()
+    stop_words = stop.all_words
+    clean_column(df_corpus, 'all', punc)
+    X_tfidf, feats_tfidf, tfidf_vect = vectorize(df_corpus, 'all', stop_words, 6000)
+    df = pd.DataFrame(df_corpus['all'])
+    df_pretty, W_df, H_df = nmf_topic_modeling(df, X_tfidf, feats_tfidf, n_topics=10, n_words=10)

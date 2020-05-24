@@ -49,7 +49,9 @@ class StopWords(object):
         'trafficked', 'back','use', 'feature', 'upper', 'definitely', 'trailhead', 'one', 
         'along', 'level', 'good',  'point', 'little', 'chance', 'october', 
         'september', 'pa', 'loop', 'moderate', 'april', 'fruita'}
-        self.all_words = self.main_words.union(self.alltrails_words)
+        self.covid_words = {'ha', 'closed', 'temporary', 'covid19', 'closure', 'reported',
+        'website', 'information', 'please', 'due', 'date'}
+        self.all_words = self.main_words.union(self.alltrails_words).union(self.covid_words)
 
     def __add__(self, word):
         self.all_words = self.all_words.union(word)
