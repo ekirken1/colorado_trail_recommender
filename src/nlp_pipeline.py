@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np 
-import matplotlib.pyplot as plt
 import string
 from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS, TfidfVectorizer, CountVectorizer
 from nltk.tokenize import word_tokenize, WhitespaceTokenizer
@@ -122,5 +121,3 @@ def document_topics(W):
     '''
     return W.argsort()[:,::-1][:,0]
 
-if __name__ == "__main__":
-    pass

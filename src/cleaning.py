@@ -1,15 +1,12 @@
-import pandas as pd
-import numpy as np 
+# import pandas as pd
+# import numpy as np 
 import matplotlib.pyplot as plt
 import json, string, random
 from nlp_pipeline import *
-from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS, CountVectorizer, TfidfVectorizer
-from nltk.tokenize import word_tokenize
-from nltk.stem.porter import PorterStemmer
-from nltk.stem.snowball import SnowballStemmer
-from nltk.stem.wordnet import WordNetLemmatizer
 from sklearn.decomposition import NMF, PCA
 from stopwords_class import StopWords
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.preprocessing import StandardScaler
 
 def json_to_pandas(filepath):
     '''
@@ -21,6 +18,12 @@ def json_to_pandas(filepath):
     return pd.read_json(filepath, lines=True)
 
 def clean_df(raw_df):
+    '''
+    Raw json dataframe cleaned and returned.
+
+    Input: Pandas dataframe
+    Output: Pandas dataframe
+    '''
     raw_df.drop('_id', axis=1,inplace=True)
     raw_df = raw_df.drop_duplicates(subset='url')
     raw_df.set_index('name', inplace=True)
@@ -29,8 +32,13 @@ def clean_df(raw_df):
     raw_df.index = raw_df.index.where(~raw_df.index.duplicated(), raw_df.index + '_4')
     return raw_df
 
-
 def get_review_corpus(data):
+    '''
+    Create dataframe containing concatenated reviews.
+
+    Input: Pandas series.
+    Output: List of hike names, list of strings
+    '''
     rows = []
     docs = []
     for i in range(len(data)):
@@ -57,6 +65,12 @@ def make_reviews_df(index, documents, col_names=['reviews']):
     return pd.DataFrame(documents, index=index, columns=col_names)
 
 def make_corpus_df(raw_df, review_df):
+    '''
+    Make main corpus dataframe of documents including: tags, main description, secondary description and reviews.
+
+    Input: Pandas dataframes.
+    Output: Pandas dataframe.
+    '''
     df_corpus = pd.DataFrame(df_raw[['url', 'tags', 'main_description', 'secondary_description']])
     df_corpus['review_string'] = df_reviews['reviews']
     df_corpus.fillna('', inplace=True)
@@ -64,6 +78,12 @@ def make_corpus_df(raw_df, review_df):
     return df_corpus
 
 def make_hike_df(raw_df):
+    '''
+    Make main hike dataframe containing: url, location, difficulty, elevation, distance, average rating, number of ratings.
+
+    Input: Pandas dataframe.
+    Output: Pandas dataframe.
+    '''
     df_hike = raw_df.copy()
     df_hike.drop(['tags', 'main_description', 'secondary_description', 'reviews'], axis=1, inplace=True)
     return df_hike
@@ -82,6 +102,12 @@ def get_top_words_tf(X, features, n_words=10):
     return top_dict
 
 def nmf_topic_modeling(corpus, tfidf_matrix, tfidf_feats, n_topics, n_words=10, max_iter=250, print_tab=False):
+    '''
+    Perform NMF, get top n words for each topic, make dataframe for both W and H matrices.
+
+    Input: Pandas dataframe, TFIDF matrix, TFIDF features, number of topics desired, number of top words desired, max iterations, print tabulate.
+    Output: Pandas dataframe of topics and top words, pandas dataframes
+    '''
     ## NMF
     W, H = get_nmf(tfidf_matrix, n_components=n_topics, max_iter=max_iter)
     top_words = get_topic_words(H, tfidf_feats, n_words)
@@ -98,7 +124,16 @@ def nmf_topic_modeling(corpus, tfidf_matrix, tfidf_feats, n_topics, n_words=10, 
     return df_pretty, W_df, H_df
 
 def hike_url_dict(raw_df):
+    '''Make dictionary of hikes and their corresponding URLs.'''
     return {raw_df.index[i]: raw_df['url'][i] for i in range(len(raw_df))}   
+
+def make_sim_matrix(merged_df, similarity_measure=cosine_similarity, mean=True, std=True):
+    '''Normalize columns.'''
+    ss = StandardScaler(with_mean=mean, with_std=std)
+    df_scaled = pd.DataFrame(ss.fit_transform(merged_df), columns=merged_df.columns, index=merged_df.index) 
+    X = df_scaled.values
+    similarity_df = pd.DataFrame(cosine_similarity(X, X), index=df_scaled.index, columns=df_scaled.index)
+    return df_scaled, similarity_df
 
 additional_lemmatize_dict = {
     "biking": "bike",
@@ -122,7 +157,14 @@ if __name__ == "__main__":
     df_trunc = pd.DataFrame(df_corpus['all'])
     df_pretty, W_df, H_df = nmf_topic_modeling(df_trunc, X_tfidf, feats_tfidf, n_topics=8, n_words=10)
 
-    df_recommendations = df_hike.merge(W_df, left_index=True, right_index=True)
+    df_merged = df_hike.merge(W_df, left_index=True, right_index=True).drop(['url', 'majority_topic', 'location', 'number_ratings'], axis=1)
+    cols_dummy = ['difficulty', 'hike_type']
+    df_merged = pd.get_dummies(df_merged, columns=cols_dummy, drop_first=True)
+    cols_to_rename = {'hike_type_Out & Back':'out_and_back', 'hike_type_Point to Point':'point_to_point'}
+    df_merged = df_merged.rename(columns=cols_to_rename)
 
-
-
+    # ss = StandardScaler()
+    # df_scaled = pd.DataFrame(ss.fit_transform(df_merged), columns=df_merged.columns, index=df_merged.index) 
+    # X = df_scaled.values
+    # similarity_df = pd.DataFrame(cosine_similarity(X, X)) 
+    df_scaled, similarity_df = make_sim_matrix(df_merged)
