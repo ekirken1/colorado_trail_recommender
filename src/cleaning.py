@@ -22,7 +22,11 @@ def json_to_pandas(filepath):
 
 def clean_df(raw_df):
     raw_df.drop('_id', axis=1,inplace=True)
+    raw_df = raw_df.drop_duplicates(subset='url')
     raw_df.set_index('name', inplace=True)
+    raw_df.index = raw_df.index.where(~raw_df.index.duplicated(), raw_df.index + '_2')
+    raw_df.index = raw_df.index.where(~raw_df.index.duplicated(), raw_df.index + '_3')
+    raw_df.index = raw_df.index.where(~raw_df.index.duplicated(), raw_df.index + '_4')
     return raw_df
 
 
@@ -35,7 +39,7 @@ def get_review_corpus(data):
         if data[i] is not None:
             for k, v in data[i].items():
                 if type(v) == list:
-                    document += (v[2].strip().replace('\n', ' ') + ' ')
+                    document += (v[2].strip().replace('\n', ' ').replace('\r', ' ') + ' ')
             docs.append(document)
             rows.append(row_name)
         else:
@@ -77,10 +81,10 @@ def get_top_words_tf(X, features, n_words=10):
     top_dict = {str(features[i]): int(summed[i]) for i in indices_top}
     return top_dict
 
-def nmf_topic_modeling(corpus, tfidf_matrix, tfidf_feats, n_topics, n_words=10, max_iter=250, print_tab=False):
+def nmf_topic_modeling(corpus, tfidf_matrix, tfidf_feats, n_topics, n_words=10, max_iter=250, print_tab=False, n_features=15):
     ## NMF
     W, H = get_nmf(tfidf_matrix, n_components=n_topics, max_iter=max_iter)
-    top_words = get_topic_words(H, tfidf_feats, n_features=15)
+    top_words = get_topic_words(H, tfidf_feats, n_features)
     df_pretty = print_topics(top_words, False)
     ## Add majority topic to hikes
     copy_maincorpus = corpus.copy()
@@ -93,6 +97,9 @@ def nmf_topic_modeling(corpus, tfidf_matrix, tfidf_feats, n_topics, n_words=10, 
     H_df = pd.DataFrame(H.round(2), index=cols, columns=tfidf_feats)
     return df_pretty, W_df, H_df
 
+def hike_url_dict(raw_df):
+    return {raw_df.index[i]: raw_df['url'][i] for i in range(len(raw_df))}   
+
 additional_lemmatize_dict = {
     "biking": "bike",
     "bikes": "bike"
@@ -101,6 +108,7 @@ additional_lemmatize_dict = {
 if __name__ == "__main__":
     df_raw = json_to_pandas('/Users/annierumbles/Dropbox/raw_colorado_hikes.json')
     df_raw = clean_df(df_raw)
+    hike_dictionary = hike_url_dict(df_raw)
     rows, docs = get_review_corpus(df_raw['reviews'])
     df_reviews = make_reviews_df(rows, docs)
     df_corpus = make_corpus_df(df_raw, df_reviews)
@@ -111,5 +119,10 @@ if __name__ == "__main__":
     stop_words = stop.all_words
     clean_column(df_corpus, 'all', punc)
     X_tfidf, feats_tfidf, tfidf_vect = vectorize(df_corpus, 'all', stop_words, 6000)
-    df = pd.DataFrame(df_corpus['all'])
-    df_pretty, W_df, H_df = nmf_topic_modeling(df, X_tfidf, feats_tfidf, n_topics=10, n_words=10)
+    df_trunc = pd.DataFrame(df_corpus['all'])
+    df_pretty, W_df, H_df = nmf_topic_modeling(df_trunc, X_tfidf, feats_tfidf, n_topics=9, n_words=10, n_features=10)
+
+    df_recommendations = df_hike.merge(W_df, left_index=True, right_index=True)
+
+
+
