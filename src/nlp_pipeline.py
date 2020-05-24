@@ -87,14 +87,14 @@ def get_nmf(X, n_components=7, max_iter=200):
     H = nmf.components_
     return W, H
 
-def get_topic_words(H, features, n_features):
+def get_topic_words(H, features, n_words):
     '''
     Get certain number of top feature names from H matrix and list of feature terms
 
     Input: H matrix from NMF, features, number of words 
     Output: Terms
     '''
-    top_word_indexes = H.argsort()[:, ::-1][:,:n_features]
+    top_word_indexes = H.argsort()[:, ::-1][:,:n_words]
     return features[top_word_indexes]
 
 def print_topics(topics, print=True):

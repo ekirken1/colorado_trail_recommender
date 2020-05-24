@@ -81,10 +81,10 @@ def get_top_words_tf(X, features, n_words=10):
     top_dict = {str(features[i]): int(summed[i]) for i in indices_top}
     return top_dict
 
-def nmf_topic_modeling(corpus, tfidf_matrix, tfidf_feats, n_topics, n_words=10, max_iter=250, print_tab=False, n_features=15):
+def nmf_topic_modeling(corpus, tfidf_matrix, tfidf_feats, n_topics, n_words=10, max_iter=250, print_tab=False):
     ## NMF
     W, H = get_nmf(tfidf_matrix, n_components=n_topics, max_iter=max_iter)
-    top_words = get_topic_words(H, tfidf_feats, n_features)
+    top_words = get_topic_words(H, tfidf_feats, n_words)
     df_pretty = print_topics(top_words, False)
     ## Add majority topic to hikes
     copy_maincorpus = corpus.copy()
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     clean_column(df_corpus, 'all', punc)
     X_tfidf, feats_tfidf, tfidf_vect = vectorize(df_corpus, 'all', stop_words, 6000)
     df_trunc = pd.DataFrame(df_corpus['all'])
-    df_pretty, W_df, H_df = nmf_topic_modeling(df_trunc, X_tfidf, feats_tfidf, n_topics=9, n_words=10, n_features=10)
+    df_pretty, W_df, H_df = nmf_topic_modeling(df_trunc, X_tfidf, feats_tfidf, n_topics=8, n_words=10)
 
     df_recommendations = df_hike.merge(W_df, left_index=True, right_index=True)
 
