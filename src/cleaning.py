@@ -222,6 +222,7 @@ if __name__ == "__main__":
         # X = df_scaled.values
         # similarity_df = pd.DataFrame(cosine_similarity(X, X)) 
         df_scaled, similarity_df, X = make_sim_matrix(df_merged)
+        
 
         sim_series = similarity_df.loc['Royal Arch Trail']
         idx = np.argsort(sim_series)[::-1][1:11]
@@ -233,5 +234,9 @@ if __name__ == "__main__":
         df_raw = pd.read_pickle('../data/raw_df.pkl')
         df_corpus = pd.read_pickle('../data/corpus_df.pkl')
         df_hike = pd.read_pickle('../data/hike_df.pkl')
-        df_scaled = pd.read_pickle('../data/scaledfeatures_df.pkl')
-        df_cosine_sim = pd.read_pickle('../data/cosinesimilarity_df.pkl')
+        df_merged = pd.read_pickle('../data/merged_df.pkl')
+        df_scaled, similarity_df, X = make_sim_matrix(df_merged)
+        hikes = df_merged.index
+        hike_dictionary = hike_url_dict(df_raw)
+
+
