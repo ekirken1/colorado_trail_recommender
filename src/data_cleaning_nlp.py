@@ -151,7 +151,7 @@ def get_top_words_tf(X, features, n_words=10):
 def nmf_topic_modeling(corpus, tfidf_matrix, tfidf_feats, n_topics, n_words=10, max_iter=250, print_tab=False):
     ## NMF
     W, H = get_nmf(tfidf_matrix, n_components=n_topics, max_iter=max_iter)
-    top_words = get_topic_words(H, tfidf_feats, n_features=15)
+    top_words = get_topic_words(H, tfidf_feats, n_words=15)
     df_pretty = print_topics(top_words, False)
     ## Add majority topic to hikes
     copy_maincorpus = corpus.copy()

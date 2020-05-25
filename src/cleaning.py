@@ -133,16 +133,58 @@ def make_sim_matrix(merged_df, similarity_measure=cosine_similarity, mean=True, 
     df_scaled = pd.DataFrame(ss.fit_transform(merged_df), columns=merged_df.columns, index=merged_df.index) 
     X = df_scaled.values
     similarity_df = pd.DataFrame(cosine_similarity(X, X), index=df_scaled.index, columns=df_scaled.index)
-    return df_scaled, similarity_df
+    return df_scaled, similarity_df, X
 
-def get_recommendations(baseline_hike, n_hikes):
+def get_hike_recommendations(baseline_hike, n_hikes):
     sim_series = similarity_df.loc[baseline_hike]
     idx = np.argsort(sim_series)[::-1][1:n_hikes+1]
     hikes = df_merged.index
     recs = [hikes[i] for i in idx]
-    print(f"If you enjoyed {baseline_hike}, you may like these:\n")
+    print(f"Because you enjoyed {baseline_hike}, you may like these:\n")
     for i, rec in zip(idx, recs):
         print(f"{hikes[i]}: {hike_dictionary[rec]}")
+
+def _get_user_profile(items):
+        '''
+        Takes a list of items and returns a user profile. A vector representing the likes of the user.
+        INPUT: 
+            items  -   LIST - list of hike names user likes / has done
+
+        OUTPUT: 
+            user_profile - NP ARRAY - array representing the likes of the user 
+                    The columns of this will match the columns of the trained on matrix
+    
+
+        Using the list of items liked by the user create a profile which will be a 1 x number of features array.  
+        This should be the addition of the values for all liked item features (you can choose how to normalize if you think it is needed)
+        '''
+        user_profile = np.zeros(X.shape[1])
+        for i in items:
+            idx = np.where(hikes==i)[0][0]
+            user_profile += X[idx]
+        return user_profile
+
+def get_user_recommendation(items, n=5):
+        '''
+        Takes a list of hikes user liked and returns the top n items for that user
+
+        INPUT 
+            items  -   LIST - list of trail names user likes/has done
+            n -  INT - number of items to return
+
+        OUTPUT 
+            items - LIST - n recommended items
+
+        Make use of the get_user_profile method to create a user profile that will be used to get the similarity to all 
+        items and recommend the top n.
+        '''
+        user_prof = _get_user_profile(items)
+        user_similarity = cosine_similarity(X, user_prof.reshape(1, -1))
+        idx = np.argsort(user_similarity[:,0])[::-1][len(items):n+len(items)]
+        recs = [hikes[i] for i in idx]
+        print(f"Because you enjoyed {items}, you may like these:\n")
+        for i, rec in zip(idx, recs):
+            print(f"{hikes[i]}: {hike_dictionary[rec]}")
 
 additional_lemmatize_dict = {
     "biking": "bike",
@@ -150,36 +192,46 @@ additional_lemmatize_dict = {
 }
 
 if __name__ == "__main__":
-    df_raw = json_to_pandas('/Users/annierumbles/Dropbox/raw_colorado_hikes.json')
-    df_raw = clean_df(df_raw)
-    hike_dictionary = hike_url_dict(df_raw)
-    rows, docs = get_review_corpus(df_raw['reviews'])
-    df_reviews = make_reviews_df(rows, docs)
-    df_corpus = make_corpus_df(df_raw, df_reviews)
-    df_hike = make_hike_df(df_raw)
+    import_pickles = True
+    rerun = False
+    if rerun:
+        df_raw = json_to_pandas('/Users/annierumbles/Dropbox/raw_colorado_hikes.json')
+        df_raw = clean_df(df_raw)
+        hike_dictionary = hike_url_dict(df_raw)
+        rows, docs = get_review_corpus(df_raw['reviews'])
+        df_reviews = make_reviews_df(rows, docs)
+        df_corpus = make_corpus_df(df_raw, df_reviews)
+        df_hike = make_hike_df(df_raw)
 
-    punc = string.punctuation
-    stop = StopWords()
-    stop_words = stop.all_words
-    clean_column(df_corpus, 'all', punc)
-    X_tfidf, feats_tfidf, tfidf_vect = vectorize(df_corpus, 'all', stop_words, 6000)
-    df_trunc = pd.DataFrame(df_corpus['all'])
-    df_pretty, W_df, H_df = nmf_topic_modeling(df_trunc, X_tfidf, feats_tfidf, n_topics=8, n_words=10)
+        punc = string.punctuation
+        stop = StopWords()
+        stop_words = stop.all_words
+        clean_column(df_corpus, 'all', punc)
+        X_tfidf, feats_tfidf, tfidf_vect = vectorize(df_corpus, 'all', stop_words, 6000)
+        df_trunc = pd.DataFrame(df_corpus['all'])
+        df_pretty, W_df, H_df = nmf_topic_modeling(df_trunc, X_tfidf, feats_tfidf, n_topics=8, n_words=10)
 
-    df_merged = df_hike.merge(W_df, left_index=True, right_index=True).drop(['url', 'majority_topic', 'location', 'number_ratings'], axis=1)
-    cols_dummy = ['difficulty', 'hike_type']
-    df_merged = pd.get_dummies(df_merged, columns=cols_dummy, drop_first=True)
-    cols_to_rename = {'hike_type_Out & Back':'out_and_back', 'hike_type_Point to Point':'point_to_point'}
-    df_merged = df_merged.rename(columns=cols_to_rename)
+        df_merged = df_hike.merge(W_df, left_index=True, right_index=True).drop(['url', 'majority_topic', 'location', 'number_ratings'], axis=1)
+        cols_dummy = ['difficulty', 'hike_type']
+        df_merged = pd.get_dummies(df_merged, columns=cols_dummy, drop_first=True)
+        cols_to_rename = {'hike_type_Out & Back':'out_and_back', 'hike_type_Point to Point':'point_to_point'}
+        df_merged = df_merged.rename(columns=cols_to_rename)
 
-    # ss = StandardScaler()
-    # df_scaled = pd.DataFrame(ss.fit_transform(df_merged), columns=df_merged.columns, index=df_merged.index) 
-    # X = df_scaled.values
-    # similarity_df = pd.DataFrame(cosine_similarity(X, X)) 
-    df_scaled, similarity_df = make_sim_matrix(df_merged)
+        # ss = StandardScaler()
+        # df_scaled = pd.DataFrame(ss.fit_transform(df_merged), columns=df_merged.columns, index=df_merged.index) 
+        # X = df_scaled.values
+        # similarity_df = pd.DataFrame(cosine_similarity(X, X)) 
+        df_scaled, similarity_df, X = make_sim_matrix(df_merged)
 
-    sim_series = similarity_df.loc['Royal Arch Trail']
-    idx = np.argsort(sim_series)[::-1][1:11]
-    hikes = df_merged.index
-    for i in idx:
-        print(hikes[i])
+        sim_series = similarity_df.loc['Royal Arch Trail']
+        idx = np.argsort(sim_series)[::-1][1:11]
+        hikes = df_merged.index
+        for i in idx:
+            print(hikes[i])
+
+    if import_pickles:
+        df_raw = pd.read_pickle('../data/raw_df.pkl')
+        df_corpus = pd.read_pickle('../data/corpus_df.pkl')
+        df_hike = pd.read_pickle('../data/hike_df.pkl')
+        df_scaled = pd.read_pickle('../data/scaledfeatures_df.pkl')
+        df_cosine_sim = pd.read_pickle('../data/cosinesimilarity_df.pkl')
