@@ -4,10 +4,10 @@ import pandas as pd
 import numpy as np
 app = Flask(__name__)
 
-with open('../data/df.pkl', 'rb') as f:
-    df = pickle.load(f)
+# with open('../data/df.pkl', 'rb') as f:
+#     df = pickle.load(f)
 
-hike_features= []
+# hike_features= []
 
 # home page
 @app.route('/')
