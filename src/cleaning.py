@@ -192,7 +192,7 @@ additional_lemmatize_dict = {
 }
 
 if __name__ == "__main__":
-    import_pickles = True
+    import_ = True
     rerun = False
     if rerun:
         df_raw = json_to_pandas('/Users/annierumbles/Dropbox/raw_colorado_hikes.json')
@@ -230,11 +230,15 @@ if __name__ == "__main__":
         for i in idx:
             print(hikes[i])
 
-    if import_pickles:
-        df_raw = pd.read_pickle('../data/raw_df.pkl')
-        df_corpus = pd.read_pickle('../data/corpus_df.pkl')
-        df_hike = pd.read_pickle('../data/hike_df.pkl')
-        df_merged = pd.read_pickle('../data/merged_df.pkl')
+    if import_:
+        # df_raw = pd.read_pickle('../data/raw_df.pkl')
+        # df_corpus = pd.read_pickle('../data/corpus_df.pkl')
+        # df_hike = pd.read_pickle('../data/hike_df.pkl')
+        # df_merged = pd.read_pickle('../data/merged_df.pkl')
+        df_raw = pd.read_csv('../data/raw_hiking_data.csv')
+        df_corpus = pd.read_csv('../data/corpus_data.csv') 
+        df_hike = pd.read_csv('../data/hike_data.csv') 
+        df_merged = pd.read_csv('../data/topics_and_numericalfeatures.csv')  
         df_scaled, similarity_df, X = make_sim_matrix(df_merged)
         hikes = df_merged.index
         hike_dictionary = hike_url_dict(df_raw)
