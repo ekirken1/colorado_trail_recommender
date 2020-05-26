@@ -182,7 +182,7 @@ def get_user_recommendation(items, n=5):
         user_similarity = cosine_similarity(X, user_prof.reshape(1, -1))
         idx = np.argsort(user_similarity[:,0])[::-1][len(items):n+len(items)]
         recs = [hikes[i] for i in idx]
-        print(f"Because you enjoyed {items}, you may like these:\n")
+        print(f"Because you enjoyed {', '.join(items)}, you may like these:\n")
         for i, rec in zip(idx, recs):
             print(f"{hikes[i]}: {hike_dictionary[rec]}")
 
@@ -192,6 +192,7 @@ additional_lemmatize_dict = {
 }
 
 if __name__ == "__main__":
+    random.seed(9)
     import_ = True
     rerun = False
     if rerun:
@@ -209,7 +210,7 @@ if __name__ == "__main__":
         clean_column(df_corpus, 'all', punc)
         X_tfidf, feats_tfidf, tfidf_vect = vectorize(df_corpus, 'all', stop_words, 6000)
         df_trunc = pd.DataFrame(df_corpus['all'])
-        df_pretty, W_df, H_df = nmf_topic_modeling(df_trunc, X_tfidf, feats_tfidf, n_topics=8, n_words=10)
+        df_pretty, W_df, H_df = nmf_topic_modeling(df_trunc, X_tfidf, feats_tfidf, n_topics=10, n_words=10)
 
         df_merged = df_hike.merge(W_df, left_index=True, right_index=True).drop(['url', 'majority_topic', 'location', 'number_ratings'], axis=1)
         cols_dummy = ['difficulty', 'hike_type']
@@ -236,9 +237,15 @@ if __name__ == "__main__":
         # df_hike = pd.read_pickle('../data/hike_df.pkl')
         # df_merged = pd.read_pickle('../data/merged_df.pkl')
         df_raw = pd.read_csv('../data/raw_hiking_data.csv')
+        df_raw.set_index('name', inplace=True)
         df_corpus = pd.read_csv('../data/corpus_data.csv') 
+        df_corpus.set_index('name', inplace=True)
         df_hike = pd.read_csv('../data/hike_data.csv') 
+        df_hike.set_index('name', inplace=True)
         df_merged = pd.read_csv('../data/topics_and_numericalfeatures.csv')  
+        df_merged.set_index('name', inplace=True)
+        df_pretty = pd.read_csv('../data/prettiedtopics.csv') 
+        df_pretty.set_index('Unnamed: 0', inplace=True)
         df_scaled, similarity_df, X = make_sim_matrix(df_merged)
         hikes = df_merged.index
         hike_dictionary = hike_url_dict(df_raw)
