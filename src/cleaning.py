@@ -187,7 +187,8 @@ def get_user_recommendation(items, n=5):
             print(f"{hikes[i]}: {hike_dictionary[rec]}")
 
 def find_hikes_partialstr(partial_str):
-    idx = np.where(hikes.str.contains(partial_str) == True)
+    cap = partial_str.capitalize()
+    idx = np.where(hikes.str.contains(cap) == True)
     names = hikes[idx]
     list_of_hikes = [names[i] for i in range(len(names))]
     return list_of_hikes
