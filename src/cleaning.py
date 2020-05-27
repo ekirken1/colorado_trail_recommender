@@ -186,6 +186,18 @@ def get_user_recommendation(items, n=5):
         for i, rec in zip(idx, recs):
             print(f"{hikes[i]}: {hike_dictionary[rec]}")
 
+def find_hikes_partialstr(partial_str):
+    idx = np.where(hikes.str.contains(partial_str) == True)
+    names = hikes[idx]
+    list_of_hikes = [names[i] for i in range(len(names))]
+    return list_of_hikes
+
+def import_csv(filepath, idx_name='Unnamed: 0'):
+    df = pd.read_csv(filepath)
+    df.set_index(idx_name, inplace=True)
+    df.rename_axis(None, inplace=True)
+    return df
+
 additional_lemmatize_dict = {
     "biking": "bike",
     "bikes": "bike"
@@ -218,10 +230,6 @@ if __name__ == "__main__":
         cols_to_rename = {'hike_type_Out & Back':'out_and_back', 'hike_type_Point to Point':'point_to_point'}
         df_merged = df_merged.rename(columns=cols_to_rename)
 
-        # ss = StandardScaler()
-        # df_scaled = pd.DataFrame(ss.fit_transform(df_merged), columns=df_merged.columns, index=df_merged.index) 
-        # X = df_scaled.values
-        # similarity_df = pd.DataFrame(cosine_similarity(X, X)) 
         df_scaled, similarity_df, X = make_sim_matrix(df_merged)
         
 
@@ -232,22 +240,15 @@ if __name__ == "__main__":
             print(hikes[i])
 
     if import_:
-        # df_raw = pd.read_pickle('../data/raw_df.pkl')
-        # df_corpus = pd.read_pickle('../data/corpus_df.pkl')
-        # df_hike = pd.read_pickle('../data/hike_df.pkl')
-        # df_merged = pd.read_pickle('../data/merged_df.pkl')
-        df_raw = pd.read_csv('../data/raw_hiking_data.csv')
-        df_raw.set_index('name', inplace=True)
-        df_corpus = pd.read_csv('../data/corpus_data.csv') 
-        df_corpus.set_index('name', inplace=True)
-        df_hike = pd.read_csv('../data/hike_data.csv') 
-        df_hike.set_index('name', inplace=True)
-        df_merged = pd.read_csv('../data/topics_and_numericalfeatures.csv')  
-        df_merged.set_index('name', inplace=True)
-        df_pretty = pd.read_csv('../data/prettiedtopics.csv') 
-        df_pretty.set_index('Unnamed: 0', inplace=True)
+        df_raw = import_csv('../data/raw_hiking_data.csv')
+        df_corpus = import_csv('../data/corpus_data.csv')
+        df_hike = import_csv('../data/hike_data.csv')
+        df_merged = import_csv('../data/topics_and_numericalfeatures.csv')
+        df_dogs_allowed = import_csv('../data/dogs_allowed.csv')
+        df_pretty = import_csv('../data/prettiedtopics.csv')
+
         df_scaled, similarity_df, X = make_sim_matrix(df_merged)
-        hikes = df_merged.index
+        all_hikes = df_raw.index
         hike_dictionary = hike_url_dict(df_raw)
 
-
+        no_dogs_hike_names = df_raw[df_raw['tags'].str.contains('no dogs')].index
