@@ -60,10 +60,6 @@ df_scaled, similarity_df, X = make_sim_matrix(df_merged)
 def index():
     return render_template('index.html')
 
-@app.route('/table')
-def table():
-    return render_template('table.html')
-
 @app.route('/trail_recommendations')
 def get_recommendation():
     return render_template('trail_recs.html')
@@ -73,8 +69,9 @@ def get_hike_form():
     trail = request.form['text']
     n = int(request.form['number of hikes'])
     recs = get_hike_recommendations(trail, n)
+    original_hikespecs = get_hike_specs(trail)
     specs = get_hike_specs(recs)
-    return render_template('table.html', trail=trail, recs=recs, hike_features=hike_features, hike_specs=specs, urls=hike_urls)
+    return render_template('results.html', trail=trail, recs=recs, hike_features=hike_features, hike_specs=specs, urls=hike_urls, original=original_hikespecs)
     # return recs
 
 @app.route('/get_started')

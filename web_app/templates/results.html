@@ -49,46 +49,64 @@
     </nav>
 
     <div class="jumbotron">
-        <div class="container">
-            <div class="col-md-6"></div>
-            <h1>Trail Recommender</h1>
-            <p>Type in a hike you loved below: </p>
-            <form method="POST">
-                <input name="text">
-                <p>And the number of recommendations you'd like: </p>
-                <input name="number of hikes">
-                <input type="submit" >
-            </form>
-        </div>
+      <div class="container">
+          <div class="col-md-6"></div>
+          <h1>Because you liked: <em><a href= "{{'%s'%urls[trail] }}">{{ trail }}</a></em></h1>
+          <p>Here are some suggestions!</p>
+      </div>
     </div>
+<!-- CSS style -->
+<style>
+table, th, td {
+    border: 2px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 10px;
+}
+table.center {
+    margin-left:auto; 
+    margin-right:auto;
+}
+</style>
+</head>
+<body>
+<table class='center'>
+  <thead>
+  {% for feat in hike_features %}
+  <th>{{ feat }}</th>
+  {% endfor %}
+  </thead>
+  <tbody>
+    {% for k, v in original_hikespecs.items() %}
+      <tr>
+        <td>{{ k }}</td>
+        {% for spec in v %}
+        <td>{{ spec }}</td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<table class="center">
+  <thead>
+    {% for feat in hike_features %}
+    <th>{{ feat }}</th>
+    {% endfor %}
+    <!-- <th>y</th> -->
+  </thead>
+  <tbody>
+    <!-- Here is where the data passed into the template gets inserted -->
+    {% for k, v in hike_specs.items() %}
+      <tr>
+        <td><a href= "{{ '%s'%urls[k] }}">{{ k }}</a></td>
+        {% for spec in v %}
+        <td>{{ spec }}</td>
+        {% endfor %}
+        <!-- <td>{{ y }}</td> -->
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6"> 
-                <h2>Need Some Inspiration? </h2>
-                <p>If you're not sure where to start, this might be the place for you! We have some recommendations based on what sort of experience you want to have! Take a look here. </p>
-                <p><a class="btn btn-default" href="#" role="button">Get Started &raquo;</a></p>
-            </div>
-        </div>
-  
-        <hr>
-  
-        <footer>
-          <p></p>
-        </footer>
-      </div> 
-  
-  
-      <!-- Bootstrap core JavaScript
-      ================================================== -->
-      <!-- Placed at the end of the document so the pages load faster -->
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-      <script>window.jQuery || document.write('<script src="../static/js/jquery.min.js"><\/script>')</script>
-      <script src="../static/js/bootstrap.min.js"></script>
-      <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-      <script src="../static/js/ie10-viewport-bug-workaround.js"></script>
-    </body>
-  </html>
-
-
-    
+</html>
