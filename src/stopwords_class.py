@@ -56,9 +56,3 @@ class StopWords(object):
     def __add__(self, word):
         self.all_words = self.all_words.union(word)
         return self.all_words
-
-    def __sub__(self, word):
-        pass
-
-    def add_numbers(self, re):
-        pass

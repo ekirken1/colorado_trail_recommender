@@ -128,7 +128,12 @@ def hike_url_dict(raw_df):
     return {raw_df.index[i]: raw_df['url'][i] for i in range(len(raw_df))}   
 
 def make_sim_matrix(merged_df, similarity_measure=cosine_similarity, mean=True, std=True):
-    '''Normalize columns.'''
+    '''
+    Normalize columns, create similarity matrix.
+    
+    Input: Pandas dataframe, similarity metric, boolean
+    Output: Pandas dataframes, numpy matrix
+    '''
     ss = StandardScaler(with_mean=mean, with_std=std)
     df_scaled = pd.DataFrame(ss.fit_transform(merged_df), columns=merged_df.columns, index=merged_df.index) 
     X = df_scaled.values
@@ -136,6 +141,9 @@ def make_sim_matrix(merged_df, similarity_measure=cosine_similarity, mean=True, 
     return df_scaled, similarity_df, X
 
 def get_hike_recommendations(baseline_hike, n_hikes):
+    '''
+    Generate recommendations given a baseline hike and the number of desired hikes to return.
+    '''
     sim_series = similarity_df.loc[baseline_hike]
     idx = np.argsort(sim_series)[::-1][1:n_hikes+1]
     hikes = df_merged.index
@@ -198,11 +206,6 @@ def import_csv(filepath, idx_name='Unnamed: 0'):
     df.set_index(idx_name, inplace=True)
     df.rename_axis(None, inplace=True)
     return df
-
-additional_lemmatize_dict = {
-    "biking": "bike",
-    "bikes": "bike"
-}
 
 if __name__ == "__main__":
     random.seed(9)

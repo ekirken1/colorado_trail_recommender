@@ -10,8 +10,6 @@ from nltk.corpus import stopwords
 from sklearn.decomposition import NMF
 from tabulate import tabulate
 
-import spacy
-
 def remove_punctuation(string, punc=string.punctuation):
     '''
     Remove punctuation from string.
