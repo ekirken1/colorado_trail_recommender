@@ -34,10 +34,17 @@
         background-image: url("../static/mayflowersummer.jpg");
         background-size: cover;
         background-position-x: center;
-        background-position-y: 20%;
+        background-position-y: 40%;
         position: relative;
         overflow: hidden;
         width: 100%;
+      }
+      .vertical-center {
+        min-height: 50%;  /* Fallback for browsers do NOT support vh unit */
+        min-height: 50vh; /* These two lines are counted as one :-)       */
+
+        display: flex;
+        align-items: center;
       }
 
     </style>
@@ -62,7 +69,7 @@
     </nav>
 
     <!-- Main jumbotron for a primary marketing message or call to action -->
-    <div class="jumbotron">
+    <div class="jumbotron vertical-center text-center">
       <div class="container">
         <h1>Discover Your Next Adventure!</h1>
         <!-- <p>Whether you recently went on a hike that you loved and want something similar, or you don't where to start - you've come to the right place! </p> -->

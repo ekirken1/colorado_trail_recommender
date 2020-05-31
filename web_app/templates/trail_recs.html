@@ -39,6 +39,13 @@
         overflow: hidden;
         width: 100%;
       }
+      .vertical-center {
+        min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+        min-height: 100vh; /* These two lines are counted as one :-)       */
+
+        display: flex;
+        align-items: center;
+      }
 
     </style>
   </head>
@@ -60,14 +67,14 @@
         </div>
     </nav>
 
-    <div class="jumbotron">
+    <div class="jumbotron vertical-center text-center">
         <div class="container">
             <div class="col-md-6"></div>
             <h1>Trail Recommender</h1>
-            <p>Type in a hike you loved below: </p>
+            <p><b>Type in a hike you loved below: </b></p>
             <form method="POST">
                 <input name="text">
-                <p>And the number of recommendations you'd like: </p>
+                <p><b>And the number of recommendations you'd like: </b></p>
                 <input name="number of hikes">
                 <input type="submit" >
             </form>
