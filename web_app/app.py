@@ -35,14 +35,13 @@ def get_hike_recommendations(baseline_hike, n_hikes):
     hikes = df_merged.index
     recs = [hikes[i] for i in idx]
     return recs
-    # return ', '.join(recs)
-    # print(f"Because you enjoyed {baseline_hike}, you may like these:\n")
-    # for i, rec in zip(idx, recs):
-    #     print(f"{hikes[i]}: {hike_urls[rec]}")
 
 def get_hike_specs(recs):
     feature_names = ['difficulty', 'hike_type', 'location', 'distance', 'elevation']
-    specs = {rec: [df_raw.loc[rec][feat] for feat in feature_names] for rec in recs}
+    if type(recs) == str:
+        specs = {recs: [df_raw.loc[recs][feat] for feat in feature_names]}
+    else:
+        specs = {rec: [df_raw.loc[rec][feat] for feat in feature_names] for rec in recs}
     return specs
 
 df_raw = import_csv('../data/raw_hiking_data.csv')
@@ -72,7 +71,6 @@ def get_hike_form():
     original_hikespecs = get_hike_specs(trail)
     specs = get_hike_specs(recs)
     return render_template('results.html', trail=trail, recs=recs, hike_features=hike_features, hike_specs=specs, urls=hike_urls, original=original_hikespecs)
-    # return recs
 
 @app.route('/get_started')
 def group_topics():
