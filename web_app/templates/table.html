@@ -81,10 +81,12 @@ table.center {
   </thead>
   <tbody>
     <!-- Here is where the data passed into the template gets inserted -->
-    {% for x in specs %}
+    {% for k, v in hike_specs.items() %}
       <tr>
-        <td>{{ x.key() }}</td>
-        <td>{{ x.values() }}</td>
+        <td><a href= "{{ '%s'%urls[k] }}">{{ k }}</a></td>
+        {% for spec in v %}
+        <td>{{ spec }}</td>
+        {% endfor %}
         <!-- <td>{{ y }}</td> -->
       </tr>
     {% endfor %}
