@@ -48,6 +48,14 @@
         </div>
         </div>
     </nav>
+
+    <div class="jumbotron">
+      <div class="container">
+          <div class="col-md-6"></div>
+          <h1>Because you liked: {{ trail }}</h1>
+          <p>Here are some suggestions!</p>
+      </div>
+    </div>
 <!-- CSS style -->
 <style>
 table, th, td {
@@ -66,15 +74,18 @@ table.center {
 <body>
 <table class="center">
   <thead>
-    <th>x</th>
-    <th>y</th>
+    {% for feat in hike_features %}
+    <th>{{ feat }}</th>
+    {% endfor %}
+    <!-- <th>y</th> -->
   </thead>
   <tbody>
     <!-- Here is where the data passed into the template gets inserted -->
-    {% for x, y in data %}
+    {% for x in specs %}
       <tr>
-        <td>{{ x }}</td>
-        <td>{{ y }}</td>
+        <td>{{ x.key() }}</td>
+        <td>{{ x.values() }}</td>
+        <!-- <td>{{ y }}</td> -->
       </tr>
     {% endfor %}
   </tbody>

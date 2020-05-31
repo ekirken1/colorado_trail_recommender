@@ -34,10 +34,16 @@ def get_hike_recommendations(baseline_hike, n_hikes):
     idx = np.argsort(sim_series)[::-1][1:n_hikes+1]
     hikes = df_merged.index
     recs = [hikes[i] for i in idx]
-    return ', '.join(recs)
+    return recs
+    # return ', '.join(recs)
     # print(f"Because you enjoyed {baseline_hike}, you may like these:\n")
     # for i, rec in zip(idx, recs):
     #     print(f"{hikes[i]}: {hike_urls[rec]}")
+
+def get_hike_specs(recs):
+    feature_names = ['difficulty', 'url', 'hike_type', 'location', 'distance', 'elevation']
+    specs = {rec: [df_raw.loc[rec][feat] for feat in feature_names] for rec in recs}
+    return specs
 
 df_raw = import_csv('../data/raw_hiking_data.csv')
 df_corpus = import_csv('../data/corpus_data.csv')
@@ -46,7 +52,7 @@ df_merged = import_csv('../data/topics_and_numericalfeatures.csv')
 df_dogs_allowed = import_csv('../data/dogs_allowed.csv')
 hike_urls = hike_url_dict(df_raw)
 
-hike_features= ['difficulty', 'hike_type', 'location', 'distance_(miles)', 'elevation_gain_(feet)']
+hike_features= ['Hike Name', 'URL', 'Difficulty', 'Hike Type', 'Location', 'Distance (miles)', 'Elevation Gain (feet)']
 df_scaled, similarity_df, X = make_sim_matrix(df_merged)
 
 # home page
@@ -67,7 +73,9 @@ def get_hike_form():
     trail = request.form['text']
     n = int(request.form['number of hikes'])
     recs = get_hike_recommendations(trail, n)
-    return recs
+    specs = get_hike_specs(recs)
+    return render_template('table.html', trail=trail, recs=recs, hike_features=hike_features, hike_specs=specs)
+    # return recs
 
 @app.route('/get_started')
 def group_topics():
