@@ -17,7 +17,12 @@ def hike_url_dict(raw_df):
     return {raw_df.index[i]: raw_df['url'][i] for i in range(len(raw_df))}
 
 def make_sim_matrix(merged_df, similarity_measure=cosine_similarity, mean=True, std=True):
-    '''Normalize columns.'''
+    '''
+    Normalize columns, create similarity matrix.
+    
+    Input: Pandas dataframe, similarity metric, boolean
+    Output: Pandas dataframes, numpy matrix
+    '''
     ss = StandardScaler(with_mean=mean, with_std=std)
     df_scaled = pd.DataFrame(ss.fit_transform(merged_df), columns=merged_df.columns, index=merged_df.index) 
     X = df_scaled.values
@@ -48,6 +53,10 @@ df_scaled, similarity_df, X = make_sim_matrix(df_merged)
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/table')
+def table():
+    return render_template('table.html')
 
 @app.route('/trail_recommendations')
 def get_recommendation():
