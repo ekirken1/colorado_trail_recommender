@@ -233,6 +233,7 @@ if __name__ == "__main__":
         df_merged = pd.get_dummies(df_merged, columns=cols_dummy, drop_first=True)
         cols_to_rename = {'hike_type_Out & Back':'out_and_back', 'hike_type_Point to Point':'point_to_point'}
         df_merged = df_merged.rename(columns=cols_to_rename)
+        # df_scaled[['out_and_back', 'point_to_point']] =df_scaled[['out_and_back', 'point_to_point']]*.5
 
         df_scaled, similarity_df, X = make_sim_matrix(df_merged)
         
