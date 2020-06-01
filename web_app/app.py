@@ -48,7 +48,7 @@ df_raw = import_csv('../data/raw_hiking_data.csv')
 df_corpus = import_csv('../data/corpus_data.csv')
 df_hike = import_csv('../data/hike_data.csv')
 df_merged = import_csv('../data/topics_and_numericalfeatures.csv')
-df_merged[['out_and_back', 'point_to_point']] = df_merged[['out_and_back', 'point_to_point']]*.35
+df_merged[['out_and_back', 'point_to_point']] = df_merged[['out_and_back', 'point_to_point']]*.25
 df_dogs_allowed = import_csv('../data/dogs_allowed.csv')
 hike_urls = hike_url_dict(df_raw)
 
