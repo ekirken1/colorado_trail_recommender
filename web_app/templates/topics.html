@@ -31,7 +31,7 @@
     <![endif]-->
     <style>
       .jumbotron {
-        background-image: url("../static/herman.jpg");
+        background-image: url("../static/sunrisedillon.jpg");
         background-size: cover;
         background-position-x: center;
         background-position-y: 70%;
@@ -40,8 +40,8 @@
         width: 100%;
       }
       .vertical-center {
-        min-height: 60%;  /* Fallback for browsers do NOT support vh unit */
-        min-height: 60vh; /* These two lines are counted as one :-)       */
+        min-height: 40%;  /* Fallback for browsers do NOT support vh unit */
+        min-height: 40vh; /* These two lines are counted as one :-)       */
 
         display: flex;
         align-items: center;
@@ -51,6 +51,19 @@
       }
 
     </style>
+    <style> 
+        table, th, td {
+            border: 2px solid black;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+        }
+        table.center {
+            margin-left:auto; 
+            margin-right:auto;
+        }
+        </style>
   </head>
 
   <body>
@@ -75,24 +88,43 @@
     <div class="jumbotron vertical-center text-center">
         <div class="container">
             <div class="col-md-6"></div>
-            <h1 style="color: #252526">About This App</h1>
+            <h1 style="color: #252526">{{ title }}</h1>
+            <h2 style="color: #252526; background-color:#ffffffcb; padding:10px; ">{{ description }}</h2>
         </div>
     </div>
 
-    <div class="container text-center">
-        <div class="row">
-            <!-- <div class="col-md-6">  -->
-                <h2>Code for this recommender can be found at my <a href="https://github.com/rumbelievable/colorado_trail_recommender" style='color: #83abeb'>Github </a></h2>
-                <!-- <h2>In case you need some <a href="http://rumbelievable.com" style='color: #83abeb'>photo inspiration! </a></h2> -->
-            </div>
-        </div>
-  
-        <hr>
-  
-        <footer>
-          <p></p>
-        </footer>
-      </div> 
+    <body>
+        <h3 style="text-align: center;">Trail Options</h3>
+        <table class="center">
+            <thead style="background-color: #25252648;">
+              {% for feat in hike_features %}
+              <th>{{ feat }}</th>
+              {% endfor %}
+              <!-- <th>y</th> -->
+            </thead>
+            <tbody>
+              <!-- Here is where the data passed into the template gets inserted -->
+              {% for k, v in hike_specs.items() %}
+                <tr>
+                  {% if '[CLOSED]' in k %}
+                  <td style="background-color: palegoldenrod;"><a href= "{{ '%s'%urls[k] }}"><b>{{ k }}</b></a></td>
+                  {% else %}
+                  <td><a href= "{{ '%s'%urls[k] }}"><b>{{ k }}</b></a></td>
+                  {% endif %}
+                  {% for spec in v %}
+                  <td>{{ spec }}</td>
+                  {% endfor %}
+                  {% if k in dogs %}
+                  <td>Yes</td>
+                  {% else %}
+                  <td style="background-color: rgba(173, 31, 31, 0.5);">No</td>
+                  {% endif %}
+                  <!-- <td>{{ y }}</td> -->
+                </tr>
+              {% endfor %}
+            </tbody>
+        </table>
+          
   
   
       <!-- Bootstrap core JavaScript
