@@ -252,6 +252,8 @@ if __name__ == "__main__":
         df_dogs_allowed = import_csv('../data/dogs_allowed.csv')
         df_pretty = import_csv('../data/prettiedtopics.csv')
 
+        df_merged[['out_and_back', 'point_to_point']] = df_merged[['out_and_back', 'point_to_point']]*.25
+
         df_scaled, similarity_df, X = make_sim_matrix(df_merged)
         all_hikes = df_raw.index
         hike_dictionary = hike_url_dict(df_raw)
