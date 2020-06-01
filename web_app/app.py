@@ -2,7 +2,7 @@ from flask import Flask, request, render_template
 import pickle
 import pandas as pd
 import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances
 from sklearn.preprocessing import StandardScaler
 app = Flask(__name__)
 
@@ -26,7 +26,7 @@ def make_sim_matrix(merged_df, similarity_measure=cosine_similarity, mean=True, 
     ss = StandardScaler(with_mean=mean, with_std=std)
     df_scaled = pd.DataFrame(ss.fit_transform(merged_df), columns=merged_df.columns, index=merged_df.index) 
     X = df_scaled.values
-    similarity_df = pd.DataFrame(cosine_similarity(X, X), index=df_scaled.index, columns=df_scaled.index)
+    similarity_df = pd.DataFrame(similarity_measure(X, X), index=df_scaled.index, columns=df_scaled.index)
     return df_scaled, similarity_df, X
 
 def get_hike_recommendations(baseline_hike, n_hikes):
@@ -48,11 +48,13 @@ df_raw = import_csv('../data/raw_hiking_data.csv')
 df_corpus = import_csv('../data/corpus_data.csv')
 df_hike = import_csv('../data/hike_data.csv')
 df_merged = import_csv('../data/topics_and_numericalfeatures.csv')
-df_merged[['out_and_back', 'point_to_point']] = df_merged[['out_and_back', 'point_to_point']]*.1
+# df_merged[['out_and_back', 'point_to_point']] = df_merged[['out_and_back', 'point_to_point']]*.5
+# df_merged[['difficulty_hard', 'difficulty_moderate']] = df_merged[['difficulty_hard', 'difficulty_moderate']]*.5
+df_merged.drop(['difficulty_hard', 'difficulty_moderate', 'out_and_back', 'point_to_point'], axis=1, inplace=True)
 df_dogs_allowed = import_csv('../data/dogs_allowed.csv')
 hike_urls = hike_url_dict(df_raw)
 
-hike_features= ['Hike Name', 'Difficulty', 'Hike Type', 'Location', 'Distance (miles)', 'Elevation Gain (feet)', 'Dogs Allowed?*']
+hike_features= ['Hike Name', 'Difficulty', 'Hike Type', 'Location', 'Distance (miles)', 'Elevation Gain (feet)', 'Dogs Allowed?']
 df_scaled, similarity_df, X = make_sim_matrix(df_merged)
 
 # home page

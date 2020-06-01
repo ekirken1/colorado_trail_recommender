@@ -102,9 +102,9 @@ table.center {
     {% for k, v in original.items() %}
       <tr>
         {% if '[CLOSED]' in k %}
-        <td style="background-color: palegoldenrod;">{{ k }}</td>
+        <td style="background-color: palegoldenrod;"><b>{{ k }}</b></td>
         {% else %}
-        <td>{{ k }}</td>
+        <td><b>{{ k }}</b></td>
         {% endif %}
         {% for spec in v %}
         <td>{{ spec }}</td>
@@ -112,7 +112,7 @@ table.center {
         {% if k in dogs %}
         <td>Yes</td>
         {% else %}
-        <td>No</td>
+        <td style="background-color: rgba(173, 31, 31, 0.5);">No</td>
         {% endif %}
       </tr>
     {% endfor %}
@@ -132,9 +132,9 @@ table.center {
     {% for k, v in hike_specs.items() %}
       <tr>
         {% if '[CLOSED]' in k %}
-        <td style="background-color: palegoldenrod;"><a href= "{{ '%s'%urls[k] }}">{{ k }}</a></td>
+        <td style="background-color: palegoldenrod;"><a href= "{{ '%s'%urls[k] }}"><b>{{ k }}</b></a></td>
         {% else %}
-        <td><a href= "{{ '%s'%urls[k] }}">{{ k }}</a></td>
+        <td><a href= "{{ '%s'%urls[k] }}"><b>{{ k }}</b></a></td>
         {% endif %}
         {% for spec in v %}
         <td>{{ spec }}</td>
@@ -142,7 +142,7 @@ table.center {
         {% if k in dogs %}
         <td>Yes</td>
         {% else %}
-        <td>No</td>
+        <td style="background-color: rgba(173, 31, 31, 0.5);">No</td>
         {% endif %}
         <!-- <td>{{ y }}</td> -->
       </tr>
@@ -150,6 +150,20 @@ table.center {
   </tbody>
 </table>
 <hr>
-<h3 style="text-align: center;"><em>Disclaimer</em>: Hike safely, follow <a href="https://lnt.org/">Leave No Trace</a> rules and guidelines, respect wildlife and enforced trail enclosures!</h3>
+<h3 style="text-align: center;"><em>Disclaimer</em>: Hike safely, follow <a href="https://lnt.org/">Leave No Trace</a> guidelines, and respect wildlife and enforced trail enclosures!</h3>
+<hr>
+<table class="center">
+  <thead style="background-color: #25252648;">
+  <th class="text-center">Legend</th>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="background-color: palegoldenrod;">Please check for updates about the closure of this trail. Most closures can be attributed to the COVID-19 pandemic and may no longer be in place.</td>
+    </tr>
+    <tr>
+      <td style="background-color: rgba(173, 31, 31, 0.5);">Dogs are not allowed on trail, please check the trail details for leash restrictions.</td>
+    </tr>
+  </tbody>
+</table>
 
 </html>
