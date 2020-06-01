@@ -93,7 +93,7 @@ table.center {
 <body>
 <h3 style="text-align: center;">Original Hike:</h3>
 <table class='center'>
-  <thead>
+  <thead style="background-color: #25252648;">
   {% for feat in hike_features %}
   <th>{{ feat }}</th>
   {% endfor %}
@@ -101,7 +101,11 @@ table.center {
   <tbody>
     {% for k, v in original.items() %}
       <tr>
+        {% if '[CLOSED]' in k %}
+        <td style="background-color: palegoldenrod;">{{ k }}</td>
+        {% else %}
         <td>{{ k }}</td>
+        {% endif %}
         {% for spec in v %}
         <td>{{ spec }}</td>
         {% endfor %}
@@ -117,7 +121,7 @@ table.center {
 <hr>
 <h3 style="text-align: center;">Hike Suggestions:</h3>
 <table class="center">
-  <thead>
+  <thead style="background-color: #25252648;">
     {% for feat in hike_features %}
     <th>{{ feat }}</th>
     {% endfor %}
@@ -127,7 +131,11 @@ table.center {
     <!-- Here is where the data passed into the template gets inserted -->
     {% for k, v in hike_specs.items() %}
       <tr>
+        {% if '[CLOSED]' in k %}
+        <td style="background-color: palegoldenrod;"><a href= "{{ '%s'%urls[k] }}">{{ k }}</a></td>
+        {% else %}
         <td><a href= "{{ '%s'%urls[k] }}">{{ k }}</a></td>
+        {% endif %}
         {% for spec in v %}
         <td>{{ spec }}</td>
         {% endfor %}
