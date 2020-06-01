@@ -52,7 +52,7 @@ df_merged[['out_and_back', 'point_to_point']] = df_merged[['out_and_back', 'poin
 df_dogs_allowed = import_csv('../data/dogs_allowed.csv')
 hike_urls = hike_url_dict(df_raw)
 
-hike_features= ['Hike Name', 'Difficulty', 'Hike Type', 'Location', 'Distance (miles)', 'Elevation Gain (feet)', 'Dogs Allowed?']
+hike_features= ['Hike Name', 'Difficulty', 'Hike Type', 'Location', 'Distance (miles)', 'Elevation Gain (feet)', 'Dogs Allowed?*']
 df_scaled, similarity_df, X = make_sim_matrix(df_merged)
 
 # home page
@@ -62,11 +62,12 @@ def index():
 
 @app.route('/trail_recommendations')
 def get_recommendation():
-    return render_template('trail_recs.html')
+    hike_names = df_raw.index
+    return render_template('trail_recs.html', names=hike_names)
 
 @app.route('/trail_recommendations', methods=['POST'])
 def get_hike_form():
-    trail = request.form['text']
+    trail = request.form['hikes']
     n = int(request.form['number of hikes'])
     recs = get_hike_recommendations(trail, n)
     original_hikespecs = get_hike_specs(trail)
