@@ -34,7 +34,7 @@
         background-image: url("../static/mayflowersummer.jpg");
         background-size: cover;
         background-position-x: center;
-        background-position-y: 40%;
+        background-position-y: 50%;
         position: relative;
         overflow: hidden;
         width: 100%;
@@ -45,6 +45,9 @@
 
         display: flex;
         align-items: center;
+      }
+      .jumbotron h1{
+        font-size: 5em;
       }
 
     </style>
@@ -62,9 +65,9 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/">Colorado Hike Recommender</a>
+          <a class="navbar-brand" href="/">Colorado Hike Recommender - Home</a>
           <a class="navbar-brand" href="/trail_recommendations">Get Hikes</a>
-          <a class="navbar-brand" href="/about" style="object-position: right;">About</a>
+          <a class="navbar-brand" href="/about">About</a>
         </div>
       </div>
     </nav>
@@ -72,10 +75,13 @@
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron vertical-center text-center">
       <div class="container">
-        <h1>Discover Your Next Adventure!</h1>
-        <!-- <p>Whether you recently went on a hike that you loved and want something similar, or you don't where to start - you've come to the right place! </p> -->
-        <p><b>Get options for your next hike based on one you loved! </b></p>
-        <p><a class="btn btn-primary btn-lg" href="/trail_recommendations" role="button">Get Recommendations &raquo;</a></p>
+        <h1>Colorado Hike Recommender</h1>
+        <br></br>
+        <!-- <h2 style="background-color:#ffffffcb; padding:10px; ">Discover Your Next Adventure</h2> -->
+        <h2 style="background-color:#ffffffcb; padding:10px; ">Get options for your next hike based on one you loved!</h2>
+        <!-- <p style="color: #ffffff"><b>Get options for your next hike based on one you loved! </b></p> -->
+        <br></br>
+        <p><a class="btn btn-primary btn-lg" href="/trail_recommendations" role="button">Discover Your Next Adventure! &raquo;</a></p>
       </div>
     </div>
 

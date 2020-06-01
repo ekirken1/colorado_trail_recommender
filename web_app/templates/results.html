@@ -40,8 +40,8 @@
         width: 100%;
       }
       .vertical-center {
-        min-height: 50%;  /* Fallback for browsers do NOT support vh unit */
-        min-height: 50vh; /* These two lines are counted as one :-)       */
+        min-height: 40%;  /* Fallback for browsers do NOT support vh unit */
+        min-height: 40vh; /* These two lines are counted as one :-)       */
 
         display: flex;
         align-items: center;
@@ -60,9 +60,9 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">Colorado Hike Recommender</a>
+            <a class="navbar-brand" href="/">Colorado Hike Recommender - Home</a>
             <a class="navbar-brand" href="/trail_recommendations">Get Hikes</a>
-            <a about="navbar-brand" href="/about" style="object-position: right;">About</a>
+            <a class="navbar-brand" href="/about">About</a>
         </div>
         </div>
     </nav>
@@ -70,8 +70,9 @@
     <div class="jumbotron vertical-center text-center">
       <div class="container">
           <div class="col-md-6"></div>
-          <h1 style='color: #252526'>Because you liked: <em><b><a href= "{{'%s'%urls[trail] }}" style='color: #83abeb'>{{ trail }}</a></b></em></h1>
-          <p style='color: #7aadf0'><b>Below are some suggestions!</b></p>
+          <h1 style='color: #252526'>Because you liked: <em><b></h1>
+          <h1 style="background-color:#ffffffcb; padding:10px; "><a href= "{{'%s'%urls[trail] }}" style='color: #252526'>{{ trail }}</a></b></em></h1>
+          <br></br>
       </div>
     </div>
 <!-- CSS style -->
@@ -90,6 +91,7 @@ table.center {
 </style>
 </head>
 <body>
+<h3 style="text-align: center;">Original Hike:</h3>
 <table class='center'>
   <thead>
   {% for feat in hike_features %}
@@ -103,11 +105,17 @@ table.center {
         {% for spec in v %}
         <td>{{ spec }}</td>
         {% endfor %}
+        {% if k in dogs %}
+        <td>Yes</td>
+        {% else %}
+        <td>No</td>
+        {% endif %}
       </tr>
     {% endfor %}
   </tbody>
 </table>
 <hr>
+<h3 style="text-align: center;">Hike Suggestions:</h3>
 <table class="center">
   <thead>
     {% for feat in hike_features %}
@@ -123,10 +131,17 @@ table.center {
         {% for spec in v %}
         <td>{{ spec }}</td>
         {% endfor %}
+        {% if k in dogs %}
+        <td>Yes</td>
+        {% else %}
+        <td>No</td>
+        {% endif %}
         <!-- <td>{{ y }}</td> -->
       </tr>
     {% endfor %}
   </tbody>
 </table>
+<hr>
+<h3 style="text-align: center;"><em>Disclaimer</em>: Hike safely, follow <a href="https://lnt.org/">Leave No Trace</a> rules and guidelines, respect wildlife and enforced trail enclosures!</h3>
 
 </html>
