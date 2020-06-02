@@ -153,53 +153,46 @@ def get_hike_recommendations(baseline_hike, n_hikes):
         print(f"{hikes[i]}: {hike_dictionary[rec]}")
 
 def _get_user_profile(items):
-        '''
-        Takes a list of items and returns a user profile. A vector representing the likes of the user.
-        INPUT: 
-            items  -   LIST - list of hike names user likes / has done
+    '''
+    Takes a list of items and returns a user profile. A vector representing the likes of the user.
+    INPUT: 
+        items  -   LIST - list of hike names user likes / has done
 
-        OUTPUT: 
-            user_profile - NP ARRAY - array representing the likes of the user 
-                    The columns of this will match the columns of the trained on matrix
-    
+    OUTPUT: 
+        user_profile - NP ARRAY - array representing the likes of the user 
+                The columns of this will match the columns of the trained on matrix
 
-        Using the list of items liked by the user create a profile which will be a 1 x number of features array.  
-        This should be the addition of the values for all liked item features (you can choose how to normalize if you think it is needed)
-        '''
-        user_profile = np.zeros(X.shape[1])
-        for i in items:
-            idx = np.where(hikes==i)[0][0]
-            user_profile += X[idx]
-        return user_profile
+
+    Using the list of items liked by the user create a profile which will be a 1 x number of features array.  
+    This should be the addition of the values for all liked item features (you can choose how to normalize if you think it is needed)
+    '''
+    user_profile = np.zeros(X.shape[1])
+    for i in items:
+        idx = np.where(hikes==i)[0][0]
+        user_profile += X[idx]
+    return user_profile
 
 def get_user_recommendation(items, n=5):
-        '''
-        Takes a list of hikes user liked and returns the top n items for that user
+    '''
+    Takes a list of hikes user liked and returns the top n items for that user
 
-        INPUT 
-            items  -   LIST - list of trail names user likes/has done
-            n -  INT - number of items to return
+    INPUT 
+        items  -   LIST - list of trail names user likes/has done
+        n -  INT - number of items to return
 
-        OUTPUT 
-            items - LIST - n recommended items
+    OUTPUT 
+        items - LIST - n recommended items
 
-        Make use of the get_user_profile method to create a user profile that will be used to get the similarity to all 
-        items and recommend the top n.
-        '''
-        user_prof = _get_user_profile(items)
-        user_similarity = cosine_similarity(X, user_prof.reshape(1, -1))
-        idx = np.argsort(user_similarity[:,0])[::-1][len(items):n+len(items)]
-        recs = [hikes[i] for i in idx]
-        print(f"Because you enjoyed {', '.join(items)}, you may like these:\n")
-        for i, rec in zip(idx, recs):
-            print(f"{hikes[i]}: {hike_dictionary[rec]}")
-
-def find_hikes_partialstr(partial_str):
-    cap = partial_str.capitalize()
-    idx = np.where(hikes.str.contains(cap) == True)
-    names = hikes[idx]
-    list_of_hikes = [names[i] for i in range(len(names))]
-    return list_of_hikes
+    Make use of the get_user_profile method to create a user profile that will be used to get the similarity to all 
+    items and recommend the top n.
+    '''
+    user_prof = _get_user_profile(items)
+    user_similarity = cosine_similarity(X, user_prof.reshape(1, -1))
+    idx = np.argsort(user_similarity[:,0])[::-1][len(items):n+len(items)]
+    recs = [hikes[i] for i in idx]
+    print(f"Because you enjoyed {', '.join(items)}, you may like these:\n")
+    for i, rec in zip(idx, recs):
+        print(f"{hikes[i]}: {hike_dictionary[rec]}")
 
 def import_csv(filepath, idx_name='Unnamed: 0'):
     '''
