@@ -13,7 +13,7 @@
     * [Cleaning](##data-cleaning)
 - [Initial EDA](#initial-exploratory-data-analysis)
 - [Topic Modeling](#topic-modeling)
-    *[Topics](##the-topics)
+    * [Topics](##the-topics)
 - [Content-Based Recommender](#recommender)
 - [Citations](#citations)
 
@@ -64,7 +64,7 @@ As mentioned, I turned my focus solely to the corpus created from reviews and de
 
 ![](images/nmf_elbowplot.png)
 
-This gave me a starting point but as I looked through the words associated with a lower number of topics (3-4 topics), I wasn't happy with how generalizable they were so I finally settled upon ten topics which showed some clearer separation in groupings. The top words associated with each topic I felt I could name to a group that may be useful for future work with a recommender. 
+This gave me a starting point but as I looked through the words associated with a lower number of topics (3-4 topics), I wasn't happy with how generalizable they were so I finally settled upon eight topics which showed some clearer separation in groupings. The top words associated with each topic I felt I could name to a group that may be useful for future work with a recommender. 
 
 ## The Topics
 
@@ -89,6 +89,7 @@ Once I had these topics, and the loadings on each topic, for each hike, I felt c
 Using cosine similarity as my metric provided the best results because of the way this distance is calculated based on the angle of the vectors and not the magnitude, like with Euclidean distance. 
 
 ![](images/cosim.png)
+
 [Source](https://www.oreilly.com/library/view/statistics-for-machine/9781788295758/eb9cd609-e44a-40a2-9c3a-f16fc4f5289a.xhtml)
 
 I used Flask and AWS to deploy my application to the web, the site can be found [here](http://ec2-3-235-195-173.compute-1.amazonaws.com:8080/).
