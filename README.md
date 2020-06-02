@@ -5,12 +5,13 @@
 
 ## Table of Contents
 - [Motivation and Background](#motivation-and-background)
-- [Data](#the-data)
+- [Workflow](#workflow)
+<!-- - [Data](#the-data)
     * [Web Scraping](##web-scraping)
     * [Cleaning](##data-cleaning)
 - [Topic Modeling](#topic-modeling)
 - [Recommender](#recommender)
-- [Citations](#citations)
+- [Citations](#citations) -->
 
 ---
 # Motivation and Background
@@ -21,7 +22,7 @@ Since this project's inception, I have had the goal to build a recommendation sy
 
 ![](images/workflow.png)
 
-# Data
+<!-- # Data
 
 ## Web Scraping
 
@@ -29,6 +30,6 @@ Since this project's inception, I have had the goal to build a recommendation sy
 
 # Topic Modeling
 
-# Hike Recommender
+# Hike Recommender -->
 
-# Citations
+<!-- # Citations -->
