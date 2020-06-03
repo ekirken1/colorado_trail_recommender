@@ -222,7 +222,7 @@ if __name__ == "__main__":
         clean_column(df_corpus, 'all', punc)
         X_tfidf, feats_tfidf, tfidf_vect = vectorize(df_corpus, 'all', stop_words, 6000)
         df_trunc = pd.DataFrame(df_corpus['all'])
-        df_pretty, W_df, H_df = nmf_topic_modeling(df_trunc, X_tfidf, feats_tfidf, n_topics=10, n_words=10)
+        df_pretty, W_df, H_df = nmf_topic_modeling(df_trunc, X_tfidf, feats_tfidf, n_topics=8, n_words=10)
 
         df_merged = df_hike.merge(W_df, left_index=True, right_index=True).drop(['url', 'majority_topic', 'location', 'number_ratings'], axis=1)
         cols_dummy = ['difficulty', 'hike_type']
