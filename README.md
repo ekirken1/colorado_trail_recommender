@@ -15,7 +15,7 @@
 - [Topic Modeling](#topic-modeling)
     * [Topics](##the-topics)
 - [Content-Based Recommender](#recommender)
-- [Citations](#citations)
+- [Citations & Acknowledgments](#citations-&-acknowledgments)
 
 ---
 # Motivation and Background
@@ -86,14 +86,18 @@ This gave me a starting point but as I looked through the words associated with 
 Once I had these topics, and the loadings on each topic, for each hike, I felt confident I had enough information to build a reliable and useful recommender. The features used in this recommender include:
 ` 'avg_rating', 'distance', 'elevation', 'topic_1', 'topic_2', 'topic_3', 'topic_4', 'topic_5', 'topic_6', 'topic_7', 'topic_8' 'difficulty_hard', 'difficulty_moderate', 'out_and_back', 'point_to_point'`
 
-Using cosine similarity as my metric provided the best results because of the way this distance is calculated based on the angle of the vectors and not the magnitude, like with Euclidean distance. 
+Using cosine similarity as my metric provided the best results because of the way this distance is calculated based on the angle of the vectors and not the magnitude, as with Euclidean distance. 
 
 ![](images/cosim.png)
 
 [Source](https://www.oreilly.com/library/view/statistics-for-machine/9781788295758/eb9cd609-e44a-40a2-9c3a-f16fc4f5289a.xhtml)
 
-I used Flask and AWS to deploy my application to the web, the site can be found [here](http://ec2-3-235-195-173.compute-1.amazonaws.com:8080/).
+I used Flask and AWS to deploy my application to the web, the site can be found [here](http://ec2-3-235-195-173.compute-1.amazonaws.com:8080/). The user can simply type in a hike they liked, and say how many hike suggestions they would like in return and the app will find the vectors most similar using cosine similarity and display them along with some information about the hikes. An example can be seen below of what the app returns. 
 
-# Citations
+![](images/examplerecs.png)
+
+# Citations & Acknowledgments
 
 [Alltrails](https://www.alltrails.com/)
+
+The Galvanize DSI cohort and instructors!
