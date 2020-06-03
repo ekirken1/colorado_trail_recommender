@@ -81,6 +81,10 @@ This gave me a starting point but as I looked through the words associated with 
 | short     | moderately | park        | pointtopoint | wildlife | crossing  | dog        | rock    |
 | shade     | forest     | moose       | wildlife     | paved    | meadow    | ride       | time    |
 
+The plot below shows the loadings, or weights, for the top 5 words in each topic.
+
+![](images/word_loadings.png)
+
 # Content-Based Recommender 
 
 Once I had these topics, and the loadings on each topic, for each hike, I felt confident I had enough information to build a reliable and useful recommender. The features used in this recommender include:
