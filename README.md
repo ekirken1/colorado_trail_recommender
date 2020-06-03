@@ -102,6 +102,8 @@ I used Flask and AWS to deploy my application to the web, the site can be found 
 
 # Citations & Acknowledgments
 
-[Alltrails](https://www.alltrails.com/)
+## [Alltrails](https://www.alltrails.com/)
 
-The Galvanize DSI cohort and instructors!
+## The Galvanize DSI cohort and instructors!
+
+![](images/pano.jpg)
