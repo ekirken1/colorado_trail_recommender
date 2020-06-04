@@ -52,6 +52,7 @@ df_merged = import_csv('../data/topics_and_numericalfeatures.csv')
 # df_merged[['difficulty_hard', 'difficulty_moderate']] = df_merged[['difficulty_hard', 'difficulty_moderate']]*.5
 df_merged.drop(['difficulty_hard', 'difficulty_moderate', 'out_and_back', 'point_to_point'], axis=1, inplace=True)
 df_dogs_allowed = import_csv('../data/dogs_allowed.csv')
+df_dogs_with_topics = import_csv('../data/dogs_with_topics.csv')
 hike_urls = hike_url_dict(df_raw)
 df_topics = df_merged[['topic_1', 'topic_2', 'topic_3', 'topic_4', 'topic_5', 'topic_6', 'topic_7', 'topic_8']]
 majority = [np.argmax(df_topics.loc[i])+1 for i in df_topics.index]
@@ -132,7 +133,10 @@ def t4():
 def t5():
     title = 'Adventures with the Pup'
     desc = "Perfect for a jog with your dog!"
-    recs_all = df_topics[df_topics['majority_topics']==5].index.tolist()
+    df_topics_dogs = df_dogs_with_topics[['topic_1', 'topic_2', 'topic_3', 'topic_4', 'topic_5', 'topic_6', 'topic_7', 'topic_8']]
+    majority = [np.argmax(df_topics_dogs.loc[i])+1 for i in df_topics_dogs.index]
+    df_topics_dogs['majority_topics'] = majority
+    recs_all = df_topics_dogs[df_topics_dogs['majority_topics']==5].index.tolist()
     recs_samp = random.sample(recs_all, 20)
     specs = get_hike_specs(recs_samp)
     return render_template('topics.html', hikes=recs_samp, hike_features=hike_features, hike_specs=specs, title=title, 
