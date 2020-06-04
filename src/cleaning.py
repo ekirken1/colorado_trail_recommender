@@ -141,9 +141,7 @@ def make_sim_matrix(merged_df, similarity_measure=cosine_similarity, mean=True, 
     return df_scaled, similarity_df, X
 
 def get_hike_recommendations(baseline_hike, n_hikes):
-    '''
-    Generate recommendations given a baseline hike and the number of desired hikes to return.
-    '''
+    '''Generate recommendations given a baseline hike and the number of desired hikes to return.'''
     sim_series = similarity_df.loc[baseline_hike]
     idx = np.argsort(sim_series)[::-1][1:n_hikes+1]
     hikes = df_merged.index
@@ -161,10 +159,6 @@ def _get_user_profile(items):
     OUTPUT: 
         user_profile - NP ARRAY - array representing the likes of the user 
                 The columns of this will match the columns of the trained on matrix
-
-
-    Using the list of items liked by the user create a profile which will be a 1 x number of features array.  
-    This should be the addition of the values for all liked item features (you can choose how to normalize if you think it is needed)
     '''
     user_profile = np.zeros(X.shape[1])
     for i in items:
@@ -182,9 +176,6 @@ def get_user_recommendation(items, n=5):
 
     OUTPUT 
         items - LIST - n recommended items
-
-    Make use of the get_user_profile method to create a user profile that will be used to get the similarity to all 
-    items and recommend the top n.
     '''
     user_prof = _get_user_profile(items)
     user_similarity = cosine_similarity(X, user_prof.reshape(1, -1))

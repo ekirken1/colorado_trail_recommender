@@ -149,6 +149,14 @@ def get_top_words_tf(X, features, n_words=10):
     return top_dict
 
 def nmf_topic_modeling(corpus, tfidf_matrix, tfidf_feats, n_topics, n_words=10, max_iter=250, print_tab=False):
+    '''
+    Run non-negative matrix factorization.
+
+    Input: Pandas dataframe - corpus of documents, NP array - TFIDF matrix, list - feature names from TFIDF vectorizer, int - number 
+        of topics, int - number of words, int - number of iterations in NMF, bool - print tabulated dataframe.
+    Output: Pandas dataframe - top n words as rows, topic # as column; Pandas dataframe - W matrix, how the topics load onto each
+        hike; Pandas dataframe - H matrix, how the words load onto each topic
+    '''
     ## NMF
     W, H = get_nmf(tfidf_matrix, n_components=n_topics, max_iter=max_iter)
     top_words = get_topic_words(H, tfidf_feats, n_words=15)

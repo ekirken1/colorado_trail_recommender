@@ -8,6 +8,7 @@ import numpy as np
 from chromedriver_class import ChromeDriver
  
 def scrape(driver_object, url_list, mongo_coll):
+    '''Run scrape on all urls.'''
     if driver_object.all_hike_urls:
         urls = driver_object.all_hike_urls
     else:
@@ -23,6 +24,12 @@ def scrape(driver_object, url_list, mongo_coll):
     return 
  
 def get_hike_information(soup):
+    '''
+    Get all hike information from html.
+
+    Input: Beautiful Soup
+    Output: Dictionary
+    '''
     description = get_hike_description(soup)
     secondary_description = get_second_description(soup)
     reviews = get_user_reviews(soup)
@@ -68,6 +75,7 @@ def get_hike_information(soup):
     return hike
 
 def hike_difficulty_levels(hike_soup):
+    '''Get hike difficulty.'''
     if hike_soup.find('span', class_="styles-module__diff___22Qtv styles-module__hard___3zHLb styles-module__selected___3fawg"):
         hike_difficulty = 'hard'
     elif hike_soup.find('span', class_="styles-module__diff___22Qtv styles-module__easy___bPX-K styles-module__selected___3fawg"):
@@ -79,6 +87,7 @@ def hike_difficulty_levels(hike_soup):
     return hike_difficulty
 
 def hike_types(soup):
+    '''Get hike type.'''
     trail_stats = soup.find('section', id="trail-stats")
     if trail_stats.find('span', class_="route-icon out-and-back"):
         hike_type = 'Out & Back'
@@ -91,6 +100,7 @@ def hike_types(soup):
     return hike_type
 
 def get_trail_stats(soup):
+    '''Get trail distance and elevation gain.'''
     trail_stats = soup.find('section', id="trail-stats")
     try:
         trail_distance = trail_stats.find('span', class_='distance-icon').find('span', class_="detail-data xlate-none").get_text()
@@ -127,6 +137,7 @@ def get_trail_stats(soup):
     return trail_distance, trail_elevation
 
 def get_tags(soup):
+    '''Get tags associated with the hike.'''
     tags = soup.find('section', class_="tag-cloud") 
     tag_object_list = [tag for tag in list(tags.children)] 
     tag_string = ''
@@ -139,6 +150,7 @@ def get_tags(soup):
     return tag_string
 
 def get_hike_description(soup):
+    '''Get main description of hike.'''
     hike_soup = soup.find('div', id='title-and-menu-box')
     info = soup.find('section', id='trail-top-overview-text')
     try:
@@ -148,6 +160,7 @@ def get_hike_description(soup):
     return description
 
 def get_second_description(soup):
+    '''Get secondary description of hike, if applicable.'''
     hike_soup = soup.find('div', id="trail-detail-item") 
     try:
         secondary_description = hike_soup.get_text()
@@ -156,6 +169,7 @@ def get_second_description(soup):
     return secondary_description
 
 def get_user_reviews(soup):
+    '''Get user names, star ratings, text reviews.'''
     user_ratings = {}
     hike_soup = soup.find('div', id='title-and-menu-box')
     try:
@@ -182,6 +196,7 @@ def get_user_reviews(soup):
     return user_ratings
 
 def unjson(filepath):
+    '''Json file to list for indexing.'''
     with open(filepath, "rb") as fp:   # Unjsoning 
         urls = json.load(fp)
     return urls

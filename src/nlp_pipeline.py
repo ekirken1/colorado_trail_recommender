@@ -114,8 +114,6 @@ def print_topics(topics, print=True):
     return df_pretty.transpose()
 
 def document_topics(W):
-    '''
-    Sort W matrix in descending order.
-    '''
+    '''Sort W matrix in descending order.'''
     return W.argsort()[:,::-1][:,0]
 
