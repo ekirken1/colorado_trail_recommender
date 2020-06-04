@@ -128,9 +128,9 @@ def t4():
     return render_template('topics.html', hikes=recs_samp, hike_features=hike_features, hike_specs=specs, title=title, 
         description=desc, urls=hike_urls, dogs=df_dogs_allowed.index)
 
-@app.route('/kid-and-dog-friendly')
+@app.route('/dog-friendly-and-leisurely')
 def t5():
-    title = 'Kid & Dog Friendly'
+    title = 'Dog Friendly & Leisurely'
     desc = "Whether it's a family adventure or leisurely walk, this category may useful to you!"
     recs_all = df_topics[df_topics['majority_topics']==5].index.tolist()
     recs_samp = random.sample(recs_all, 20)

@@ -90,7 +90,7 @@ The plot below shows the loadings, or weights, for the top 5 words in each topic
 Once I had these topics, and the loadings on each topic, for each hike, I felt confident I had enough information to build a reliable and useful recommender. The features used in this recommender include:
 ` 'avg_rating', 'distance', 'elevation', 'topic_1', 'topic_2', 'topic_3', 'topic_4', 'topic_5', 'topic_6', 'topic_7', 'topic_8' 'difficulty_hard', 'difficulty_moderate', 'out_and_back', 'point_to_point'`
 
-Using cosine similarity as my metric provided the best results because of the way this distance is calculated based on the angle of the vectors and not the magnitude, as with Euclidean distance. 
+Using cosine similarity as my metric provided the best results because of the way this distance is calculated based on the angle between the vectors and not the magnitude, as with Euclidean distance. 
 
 ![](images/cosim.png)
 
