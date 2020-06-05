@@ -83,7 +83,7 @@ This gave me a starting point but as I looked through the words associated with 
 
 The plot below shows the loadings, or weights, for the top 5 words in each topic.
 
-![](images/word_loadings.png)
+![](images/word_loadings_with_titles.png)
 
 # Content-Based Recommender 
 
