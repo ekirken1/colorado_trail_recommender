@@ -1,5 +1,5 @@
-# import pandas as pd
-# import numpy as np 
+import pandas as pd
+import numpy as np 
 import matplotlib.pyplot as plt
 import json, string, random
 from nlp_pipeline import *
@@ -153,12 +153,9 @@ def get_hike_recommendations(baseline_hike, n_hikes):
 def _get_user_profile(items):
     '''
     Takes a list of items and returns a user profile. A vector representing the likes of the user.
-    INPUT: 
-        items  -   LIST - list of hike names user likes / has done
 
-    OUTPUT: 
-        user_profile - NP ARRAY - array representing the likes of the user 
-                The columns of this will match the columns of the trained on matrix
+    Input: List, list of hike names user likes / has done
+    Output: Numpy array, array representing the likes of the user 
     '''
     user_profile = np.zeros(X.shape[1])
     for i in items:
@@ -170,12 +167,8 @@ def get_user_recommendation(items, n=5):
     '''
     Takes a list of hikes user liked and returns the top n items for that user
 
-    INPUT 
-        items  -   LIST - list of trail names user likes/has done
-        n -  INT - number of items to return
-
-    OUTPUT 
-        items - LIST - n recommended items
+    Input: List, list of trail names user likes/has done; int, number of items to return
+    Output: None
     '''
     user_prof = _get_user_profile(items)
     user_similarity = cosine_similarity(X, user_prof.reshape(1, -1))
@@ -239,8 +232,8 @@ if __name__ == "__main__":
         df_pretty = import_csv('../data/prettiedtopics.csv')
         print(df_merged.head())
 
-        # df_merged[['out_and_back', 'point_to_point']] = df_merged[['out_and_back', 'point_to_point']]*.1
-        # df_merged[['difficulty_hard', 'difficulty_moderate']] = df_merged[['difficulty_hard', 'difficulty_moderate']]*.5
+        df_merged[['out_and_back', 'point_to_point']] = df_merged[['out_and_back', 'point_to_point']]*.1
+        df_merged[['difficulty_hard', 'difficulty_moderate']] = df_merged[['difficulty_hard', 'difficulty_moderate']]*.5
 
         df_scaled, similarity_df, X = make_sim_matrix(df_merged)
         all_hikes = df_raw.index
