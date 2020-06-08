@@ -56,7 +56,7 @@ Most hikes only had a few words associated, while some had many, as you can see 
 After trying, unsuccessfully, to glean some structure from the hike information data set, I decided to focus on the corpus of documents containing text data from each hike. My NLP pipeline was as follows:
 **lowercase &rarr; remove punctuation &rarr; remove stop words &rarr; lemmatize (using nltk's WordNet lemmatizer) &rarr; vectorize.** The WordNet lemmatizer performed really well and I had looked into implementing a SpaCy lemmatizer but I was pleased with how nltk's lemmatizer handled most root words. Using a term frequency vector, I inspected common words both to see what words were most used and also to get an idea of what stop words I could add to my stop words list. 
 
-![](images/wordcloud_afterstopwords_200.png)
+![](images/new_wordcloud.png)
 
 # Topic Modeling
 
