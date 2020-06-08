@@ -1,5 +1,5 @@
-# import pandas as pd
-# import numpy as np 
+import pandas as pd
+import numpy as np 
 import matplotlib.pyplot as plt
 import json, string, random
 from nlp_pipeline import *
@@ -239,8 +239,8 @@ if __name__ == "__main__":
         df_pretty = import_csv('../data/prettiedtopics.csv')
         print(df_merged.head())
 
-        # df_merged[['out_and_back', 'point_to_point']] = df_merged[['out_and_back', 'point_to_point']]*.1
-        # df_merged[['difficulty_hard', 'difficulty_moderate']] = df_merged[['difficulty_hard', 'difficulty_moderate']]*.5
+        df_merged[['out_and_back', 'point_to_point']] = df_merged[['out_and_back', 'point_to_point']]*.1
+        df_merged[['difficulty_hard', 'difficulty_moderate']] = df_merged[['difficulty_hard', 'difficulty_moderate']]*.5
 
         df_scaled, similarity_df, X = make_sim_matrix(df_merged)
         all_hikes = df_raw.index
