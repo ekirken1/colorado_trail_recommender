@@ -5,25 +5,33 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from pymongo import MongoClient
 import pandas as pd
 import numpy as np 
-from chromedriver_class import ChromeDriver
- 
+from src.chromedriver_class import ChromeDriver
+from src.configs.get_configs import get_all_configs
+from src.data_connections.dbs import get_mongo_data
+
+
 def scrape(driver_object, url_list, mongo_coll):
     '''Run scrape on all urls.'''
     if driver_object.all_hike_urls:
         urls = driver_object.all_hike_urls
     else:
         urls = url_list
+
     for url in urls:
         driver_object.driver.get(url)
         time.sleep(5)
         html = driver_object.load_reviews(url)
         soup = BeautifulSoup(html, 'lxml')
-        hike_soup = get_hike_information(soup)
+        hike_soup = get_hike_information(soup, mongo_coll)
         mongo_coll.insert_one(hike_soup)
         time.sleep(4)
-    return 
+
+    print(f"Number of hikes: {mongo_coll.count_documents({})}")
+
+    return
  
-def get_hike_information(soup):
+
+def get_hike_information(soup, hikes):
     '''
     Get all hike information from html.
 
@@ -34,12 +42,22 @@ def get_hike_information(soup):
     secondary_description = get_second_description(soup)
     reviews = get_user_reviews(soup)
     hike_soup = soup.find('div', id='title-and-menu-box')
+
     try:
         hike_name = hike_soup.find('h1', itemprop="name").get_text()
     except:
         hike_name = None
-    hike_difficulty = hike_difficulty_levels(hike_soup)  
-    hike_type = hike_types(soup)
+
+    if hikes.find_one({"hike_name": hike_name}):
+        return
+    try:
+        hike_difficulty = hike_difficulty_levels(hike_soup)
+    except:
+        hike_difficulty = None
+    try:
+        hike_type = hike_types(soup)
+    except:
+        hike_type = None
     try:
         rating = float(hike_soup.find('meta', itemprop='ratingValue')['content'])
     except:
@@ -52,12 +70,18 @@ def get_hike_information(soup):
         general_location = hike_soup.find('a', class_="xlate-none styles-module__location___11FHK styles-module__location___3wEnO").get_text()
     except:
         general_location = None
-
-    trail_distance, trail_elevation = get_trail_stats(soup)
-
-    tags = get_tags(soup)
-
-    url = soup.find('div', id='main')['itemid']
+    try:
+        trail_distance, trail_elevation = get_trail_stats(soup)
+    except:
+        trail_distance, trail_elevation = None
+    try:
+        tags = get_tags(soup)
+    except:
+        tags = None
+    try:
+        url = soup.find('div', id='main')['itemid']
+    except:
+        url = None
 
     hike = {'name': hike_name,
             'url': url,
@@ -74,6 +98,7 @@ def get_hike_information(soup):
             'reviews': reviews}
     return hike
 
+
 def hike_difficulty_levels(hike_soup):
     '''Get hike difficulty.'''
     if hike_soup.find('span', class_="styles-module__diff___22Qtv styles-module__hard___3zHLb styles-module__selected___3fawg"):
@@ -84,7 +109,9 @@ def hike_difficulty_levels(hike_soup):
         hike_difficulty = 'moderate'
     else:
         hike_difficulty = None
+
     return hike_difficulty
+
 
 def hike_types(soup):
     '''Get hike type.'''
@@ -98,6 +125,7 @@ def hike_types(soup):
     else:
         hike_type = None
     return hike_type
+
 
 def get_trail_stats(soup):
     '''Get trail distance and elevation gain.'''
@@ -136,6 +164,7 @@ def get_trail_stats(soup):
         trail_elevation = None
     return trail_distance, trail_elevation
 
+
 def get_tags(soup):
     '''Get tags associated with the hike.'''
     tags = soup.find('section', class_="tag-cloud") 
@@ -149,6 +178,7 @@ def get_tags(soup):
             continue
     return tag_string
 
+
 def get_hike_description(soup):
     '''Get main description of hike.'''
     hike_soup = soup.find('div', id='title-and-menu-box')
@@ -159,6 +189,7 @@ def get_hike_description(soup):
         description = None
     return description
 
+
 def get_second_description(soup):
     '''Get secondary description of hike, if applicable.'''
     hike_soup = soup.find('div', id="trail-detail-item") 
@@ -167,6 +198,7 @@ def get_second_description(soup):
     except:
         secondary_description = None
     return secondary_description
+
 
 def get_user_reviews(soup):
     '''Get user names, star ratings, text reviews.'''
@@ -195,24 +227,40 @@ def get_user_reviews(soup):
         return user_ratings
     return user_ratings
 
+
 def unjson(filepath):
     '''Json file to list for indexing.'''
     with open(filepath, "rb") as fp:   # Unjsoning 
         urls = json.load(fp)
     return urls
 
-if __name__ == "__main__":
-    mongo = True
-    full_scrape = True
 
+def main():
+    config_file = "src/configs/config.ini"
+    html_file_path = "data/html.txt"
+    json_file_path = "data/alltrails_colorado_hikes.json"
+    colorado_trails_url = "https://www.alltrails.com/us/colorado"
     chrome = ChromeDriver()
-    urls = unjson('/Users/annierumbles/Desktop/Coding/galvanize/second_capstone_live/data/ALL_colorado_url_list.json')
+    configs = get_all_configs(config_file)
+    mongo_configs = configs["mongo"]
 
-    if mongo:
-        client = MongoClient('localhost', 27017)
-        db = client['hikes']
-        colorado_hikes = db['colorado_hikes']
+    client, colorado_hikes = get_mongo_data(mongo_configs)
 
-    if full_scrape:
+    if colorado_hikes.count_documents({}) == 0:
+        if os.path.exists(json_file_path):
+            print("Unpacking trail urls...")
+            urls = unjson(json_file_path)
+            urls.sort()
+        else:
+            print("Scraping trail urls...")
+            chrome.save_urls_to_json(colorado_trails_url, html_file_path, json_file_path)
+            
+        print("Scraping all urls...")
         scrape(chrome, urls, colorado_hikes)
+
+    return client, colorado_hikes
+
+
+if __name__ == "__main__":
+    client, colorado_hikes = main()
 

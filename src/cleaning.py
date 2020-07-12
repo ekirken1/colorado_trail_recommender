@@ -1,12 +1,25 @@
+import os
 import pandas as pd
 import numpy as np 
 import matplotlib.pyplot as plt
 import json, string, random
-from nlp_pipeline import *
+from pymongo import MongoClient
+import pickle
+from src.nlp_pipeline import *
 from sklearn.decomposition import NMF, PCA
-from stopwords_class import StopWords
+from src.stopwords_class import StopWords
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import StandardScaler
+from src.configs.get_configs import get_all_configs
+from src.data_connections.dbs import get_mongo_data
+
+
+def fetch_mongo_data(mongo_db):
+    """ Fetch data from MongoDB and store as JSON. """
+    data = pd.DataFrame(list(mongo_db.find()))
+
+    return data
+
 
 def json_to_pandas(filepath):
     '''
@@ -16,6 +29,7 @@ def json_to_pandas(filepath):
     Output: Pandas dataframe
     '''
     return pd.read_json(filepath, lines=True)
+
 
 def clean_df(raw_df):
     '''
@@ -30,7 +44,9 @@ def clean_df(raw_df):
     raw_df.index = raw_df.index.where(~raw_df.index.duplicated(), raw_df.index + '_2')
     raw_df.index = raw_df.index.where(~raw_df.index.duplicated(), raw_df.index + '_3')
     raw_df.index = raw_df.index.where(~raw_df.index.duplicated(), raw_df.index + '_4')
+
     return raw_df
+
 
 def get_review_corpus(data):
     '''
@@ -55,6 +71,7 @@ def get_review_corpus(data):
             rows.append(row_name)
     return rows, docs
 
+
 def make_reviews_df(index, documents, col_names=['reviews']):
     '''
     Make review dataframe from hike reviews text.
@@ -63,6 +80,7 @@ def make_reviews_df(index, documents, col_names=['reviews']):
     Output: Pandas dataframe
     '''
     return pd.DataFrame(documents, index=index, columns=col_names)
+
 
 def make_corpus_df(raw_df, review_df):
     '''
@@ -77,6 +95,7 @@ def make_corpus_df(raw_df, review_df):
     df_corpus['all'] = df_corpus['tags'] + ' ' + df_corpus['main_description'] + ' ' + df_corpus['secondary_description'] + ' ' + df_corpus['review_string']
     return df_corpus
 
+
 def make_hike_df(raw_df):
     '''
     Make main hike dataframe containing: url, location, difficulty, elevation, distance, average rating, number of ratings.
@@ -87,6 +106,7 @@ def make_hike_df(raw_df):
     df_hike = raw_df.copy()
     df_hike.drop(['tags', 'main_description', 'secondary_description', 'reviews'], axis=1, inplace=True)
     return df_hike
+
 
 def get_top_words_tf(X, features, n_words=10):
     '''
@@ -100,6 +120,7 @@ def get_top_words_tf(X, features, n_words=10):
     indices_top = np.argsort(-summed)[:n_words]
     top_dict = {str(features[i]): int(summed[i]) for i in indices_top}
     return top_dict
+
 
 def nmf_topic_modeling(corpus, tfidf_matrix, tfidf_feats, n_topics, n_words=10, max_iter=250, print_tab=False):
     '''
@@ -187,13 +208,30 @@ def import_csv(filepath, idx_name='Unnamed: 0'):
     df.rename_axis(None, inplace=True)
     return df
 
+
+def pickle_data(path, data):
+    """
+    """
+    with open(path, 'wb') as f:
+        pickle.dump(data, f)
+
 if __name__ == "__main__":
     random.seed(9)
-    import_ = True
-    rerun = False
-    if rerun:
-        df_raw = json_to_pandas('/Users/annierumbles/Dropbox/raw_colorado_hikes.json')
-        df_raw = clean_df(df_raw)
+    import_ = False
+    rerun = True
+    config_file = "src/configs/config.ini"
+    pickle_path = Path("data/model_data.pickle")
+    configs = get_all_configs(config_file)
+    mongo_configs = configs["mongo"]
+
+    if os.path.exists(pickle_path):
+        data_dict = pickle.load(pickle_path)
+    else:
+        client, colorado_hikes = get_mongo_data(mongo_configs)
+
+        df_mongo = fetch_mongo_data(colorado_hikes)
+        df_clean = clean_df(df_mongo)
+        pickle_data(pickle_path, df_clean)
         hike_dictionary = hike_url_dict(df_raw)
         rows, docs = get_review_corpus(df_raw['reviews'])
         df_reviews = make_reviews_df(rows, docs)
@@ -221,6 +259,9 @@ if __name__ == "__main__":
         hikes = df_merged.index
         for i in idx:
             print(hikes[i])
+
+    
+
 
     if import_:
         df_raw = import_csv('../data/raw_hiking_data.csv')
