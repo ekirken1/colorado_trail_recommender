@@ -14,6 +14,7 @@ import spacy
 
 from nltk.corpus import stopwords
 
+
 def json_to_pandas(filepath):
     '''
     Read json file to Pandas dataframe
@@ -22,6 +23,7 @@ def json_to_pandas(filepath):
     Output: Pandas dataframe
     '''
     return pd.read_json(filepath, lines=True)
+
 
 def clean_hikes(df):
     '''
@@ -46,6 +48,7 @@ def clean_hikes(df):
     df.rename_axis(None, inplace=True)
     return df
 
+
 def _json_adjustments(json_file):
     '''
     Read in each line of a json file.
@@ -55,6 +58,7 @@ def _json_adjustments(json_file):
     '''
     data = [json.loads(line) for line in open(json_file, 'r')]   
     return data 
+
 
 def get_corpus_info(json_file, name='hike_name'):
     '''
@@ -91,6 +95,7 @@ def get_description_text(json_file):
     df_description = pd.DataFrame.from_dict(description, orient='index', columns=['description'])
     return df_description
 
+
 def add_tags_to_df(merged_df):
     '''
     Merge individual tags to review text in dataframe.
@@ -114,6 +119,7 @@ def add_tags_to_df(merged_df):
     merged_df['all'] = text
     return merged_df
 
+
 def reviews_and_description(review_df, desc_df):
     '''
     Combined reviews and description text.
@@ -126,6 +132,7 @@ def reviews_and_description(review_df, desc_df):
     merged_corpus = pd.merge(review_df_sorted, desc_df_sorted, left_index=True, right_index=True, how='inner')
     return merged_corpus
 
+
 def make_corpus_df(index, documents, col_names=['reviews']):
     '''
     Make main corpus from hike reviews text.
@@ -134,6 +141,7 @@ def make_corpus_df(index, documents, col_names=['reviews']):
     Output: Pandas dataframe
     '''
     return pd.DataFrame(documents, index=index, columns=col_names)
+
 
 def get_top_words_tf(X, features, n_words=10):
     '''
@@ -147,6 +155,7 @@ def get_top_words_tf(X, features, n_words=10):
     indices_top = np.argsort(-summed)[:n_words]
     top_dict = {str(features[i]): int(summed[i]) for i in indices_top}
     return top_dict
+
 
 def nmf_topic_modeling(corpus, tfidf_matrix, tfidf_feats, n_topics, n_words=10, max_iter=250, print_tab=False):
     '''
@@ -171,6 +180,7 @@ def nmf_topic_modeling(corpus, tfidf_matrix, tfidf_feats, n_topics, n_words=10, 
     W_df['majority_topic'] += 1
     H_df = pd.DataFrame(H.round(2), index=cols, columns=tfidf_feats)
     return df_pretty, W_df, H_df
+
 
 if __name__ == "__main__":
     random.seed(9)
