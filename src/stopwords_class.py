@@ -1,8 +1,11 @@
+import nltk
 from nltk.corpus import stopwords
 import re 
 
 class StopWords(object):
     def __init__(self):
+        nltk.download("stopwords")
+        nltk.download("wordnet")
         self.main_words = set(stopwords.words('english'))
         self.alltrails_words = {'10', '100', '1000', '1030', '10am', '11', '11am', '12', '13', '14', '15',
         '16', '17', '18', '1st', '20', '2017', '2018', '2019', '22', '23', '24',
