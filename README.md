@@ -1,5 +1,7 @@
 # [Colorado Hiking Trail Recommender](http://ec2-3-235-195-173.compute-1.amazonaws.com:8080/)
-> Annie Rumbles
+> Borrowed from Annie Rumbles's colorado_trail_recommender
+
+I was looking for a DS project to do. When I heard Annie present this at the Galvanize Capstone presentations, I was inspired to try it out myself! This is really similar to something I've always wanted to try, and it aligns with my interests, as well. I wasn't able to get contact info for Annie, but I really appreciate her work!!
 
 ![](images/IMG_9256.JPG)
 
